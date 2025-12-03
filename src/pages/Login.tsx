@@ -3,13 +3,26 @@ import { RoleCard } from "../components/login/RoleCard";
 import { AdminPanelIcon, BackspaceIcon, PointOfSaleIcon } from "../components/Icons";
 import { PinDot } from "../components/login/PinDot";
 import { KeypadButton } from "../components/login/KeyPad";
-import axios from "axios";
-
-const apiUrl = import.meta.env.VITE_API_URL;
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const { user, login } = useAuth();
+  const navigate = useNavigate();
+
   const [activeRole, setActiveRole] = useState<"CASHIER" | "ADMIN">("CASHIER");
   const [pin, setPin] = useState<string>("");
+
+  // role-based redirection
+  useEffect(() => {
+    if (user) {
+      if (user.role === "CASHIER") {
+        navigate("/pos", { replace: true });
+      } else if (user.role === "ADMIN") {
+        navigate("/admin", { replace: true });
+      }
+    }
+  }, [user, navigate]);
 
   const handleNumClick = (num: string) => {
     if (pin.length < 6) {
@@ -22,14 +35,13 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
-    // Add authentication logic here
-    const data = {
-      role: activeRole,
-      pin,
-    };
+    const isSuccess = await login(activeRole, pin);
 
-    const response = await axios.post(`${apiUrl}/api/auth/login`, data);
-    console.log("Access Token:", response.data.accessToken);
+    if (isSuccess) {
+      navigate("/pos");
+    } else {
+      alert("Invalid PIN or Role"); 
+    }
   };
 
   // Keyboard support
@@ -45,6 +57,7 @@ const Login = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line
   }, [pin]);
 
   return (

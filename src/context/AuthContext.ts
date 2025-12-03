@@ -3,9 +3,8 @@ import type { User } from "../types/auth";
 
 export interface AuthContextType {
   user: User | null;
-  login: (userData: User) => void;
+  login: (role: string, pin: string) => boolean | Promise<boolean>;
   logout: () => void;
-  isAuthenticated: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

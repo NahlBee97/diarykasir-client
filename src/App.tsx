@@ -14,14 +14,9 @@ const App = () => {
           {/* Cashier routes */}
           <Route path="/" element={<CashierLayout />}>
             <Route index element={<Login />} />
-            <Route
-              path="/pos"
-              element={
-                <ProtectedRoute>
-                  <Pos />
-                </ProtectedRoute>
-              }
-            />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/pos" element={<Pos />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<NotFound />} />
