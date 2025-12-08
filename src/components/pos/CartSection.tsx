@@ -1,16 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CartItem } from "../../interfaces/cartInterfaces";
 import { getUserCart } from "../../services/cartServices";
 import Loader from "../Loader";
 import EmptyCart from "./EmptyCart";
 import QuantitySelector from "./QuantitySelector";
+import { useState } from "react";
+import PaymentModal from "./FinalizePayment";
+import { createOrder } from "../../services/orderServices";
+import type { NewOrder } from "../../interfaces/orderInterface";
 
-interface CartSectionProps {
-  onClickPay: () => void;
-}
+const CartSection = () => {
+  const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const CartSection = ({ onClickPay }: CartSectionProps) => {
-  
   const {
     data: cart = { items: [] },
     isLoading: cartLoading,
@@ -20,13 +22,44 @@ const CartSection = ({ onClickPay }: CartSectionProps) => {
     queryFn: () => getUserCart(),
   });
 
-  const total = cart.items.length
+  const { mutate: checkout, isPending } = useMutation({
+    mutationKey: ["checkout"],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    mutationFn: async (orderData: NewOrder) => {
+      return createOrder(orderData);
+    },
+    onError: (error) => {
+      alert("Error: " + error);
+    },
+  });
+
+  const total: number = cart.items.length
     ? cart.items.reduce(
         (sum: number, item: CartItem) =>
           sum + item.product.price * item.quantity,
         0
       )
     : 0;
+
+  const handleConfirmPayment = (cashReceived: number, change: number) => {
+    try {
+      const orderData = {
+        userId: cart.userId as number,
+        totalAmount: total,
+        paymentCash: cashReceived,
+        paymentChange: change,
+      };
+
+      checkout(orderData);
+      alert("Order created successfully!");
+    } catch (error) {
+      console.error("Payment confirmation error:", error);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
 
   if (cartLoading) {
     return (
@@ -112,12 +145,19 @@ const CartSection = ({ onClickPay }: CartSectionProps) => {
           </p>
         </div>
         <button
-          onClick={onClickPay}
+          onClick={() => setIsModalOpen(true)}
+          disabled={isPending}
           className="w-full mt-6 bg-[#f9f906] text-black text-xl font-bold py-4 rounded-lg hover:brightness-110 transition-all duration-300 shadow-[0_0_15px_rgba(249,249,6,0.4)] hover:shadow-[0_0_20px_rgba(249,249,6,0.6)]"
         >
           PROCEED TO PAY
         </button>
       </div>
+      <PaymentModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        total={total}
+        onConfirm={handleConfirmPayment}
+      />
     </div>
   );
 };

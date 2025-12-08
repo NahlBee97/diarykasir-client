@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { SearchIcon } from "../components/Icons";
-import PaymentModal from "../components/pos/FinalizePayment";
 import CartSection from "../components/pos/CartSection";
 import LogoutButton from "../components/LogOutButton";
 import { useAuth } from "../hooks/useAuth";
@@ -15,8 +14,6 @@ const Pos = () => {
 
   const [activeCategory, setActiveCategory] = useState(categories[0]);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="relative flex h-screen w-full flex-col text-white overflow-hidden bg-[#11110A] font-sans">
@@ -87,17 +84,7 @@ const Pos = () => {
         </div>
 
         {/* --- Right Column (Cart) --- */}
-        <CartSection onClickPay={() => setIsModalOpen(true)} />
-
-        <PaymentModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          total={50000}
-          onConfirm={(cash, change) => {
-            alert(`Paid: ${cash}, Change: ${change}`);
-            setIsModalOpen(false);
-          }}
-        />
+        <CartSection />
       </div>
     </div>
   );

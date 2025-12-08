@@ -24,7 +24,7 @@ api.interceptors.response.use(
   (error) => {
     // Check if the error is specifically a 401
     if (error.response?.status === 401) {
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("token");
 
       window.location.href = "/";
     }

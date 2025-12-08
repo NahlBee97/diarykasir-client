@@ -38,7 +38,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   onConfirm,
 }) => {
   const [cashReceivedStr, setCashReceivedStr] = useState<string>(
-    total.toString()
+    ""
   );
   const [change, setChange] = useState<number>(0);
 
