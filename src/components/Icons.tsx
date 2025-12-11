@@ -226,3 +226,65 @@ export const ErrorIcon = () => (
   </svg>
 );
 
+export const AddIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M11 19v-6H5v-2h6V5h2v6h6v2h-6v6h-2Z" />
+  </svg>
+);
+
+export const EditIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+  </svg>
+);
+
+export const DeleteIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+  </svg>
+);
+
+export const PhotoCameraIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="48"
+    height="48"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="w-12 h-12"
+  >
+    <path d="M12 9a3 3 0 1 0 3 3 3 3 0 0 0-3-3Zm0 8a5 5 0 1 1 5-5 5 5 0 0 1-5 5Zm9-11h-2.59l-.3-.38L16.4 3.7A2 2 0 0 0 14.88 3H9.12a2 2 0 0 0-1.52.7L5.89 5.62l-.3.38H3a2 2 0 0 0-2 2V19a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2ZM3 19V8h3.33l.29-.38L8.33 5h7.34l1.71 2.62.29.38H21v11Z" />
+  </svg>
+);
+
+export const ExpandMoreIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="w-5 h-5"
+  >
+    <path d="M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+  </svg>
+);
+

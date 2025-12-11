@@ -1,0 +1,241 @@
+import { useFormik } from "formik";
+import { ExpandMoreIcon, PhotoCameraIcon } from "../../components/Icons";
+import { useNavigate, useParams } from "react-router-dom";
+import { editProductSchema, productSchema } from "../../schemas/productSchema";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createProduct, deleteProduct, getProductById, updateProduct } from "../../services/productServices";
+import type { NewProduct, UpdateProduct } from "../../interfaces/productInterfaces";
+
+const GLOW_SHADOW_CONTAINER = "0 0 30px rgba(249,249,6,0.3)";
+const GLOW_SHADOW_INPUT = "0 0 10px rgba(249,249,6,0.2)";
+const TEXT_SHADOW_HEADER = "0 0 10px rgba(249,249,6,0.7)";
+
+const categories = ["Ayam Geprek", "Minuman", "Tambahan"];
+
+const AddEditProduct = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const pathSegments = location.pathname.split("/");
+  const mode = pathSegments.includes("add") ? "add" : "edit";
+
+  const {
+    data: product,
+    isLoading: productLoading,
+    error: productError,
+  } = useQuery({
+    queryKey: ["product"],
+    queryFn: () => getProductById(Number(id)),
+  });
+
+  const { mutate: addProduct, isPending: addPending } = useMutation({
+    mutationFn: async (data: NewProduct) => {
+      return createProduct(data);
+    },
+    onSuccess: () => {
+      navigate("/admin/products");
+    },
+    onError: (error) => {
+      alert("Error: " + error);
+    },
+  });
+
+  const { mutate: editProduct, isPending: editPending } = useMutation({
+    mutationFn: async (data: UpdateProduct) => {
+      return updateProduct(product.id, data);
+    },
+    onSuccess: () => {
+      navigate("/admin/products");
+    },
+    onError: (error) => {
+      alert("Error: " + error);
+    },
+  });
+
+  const formik = useFormik<NewProduct | UpdateProduct>({
+    enableReinitialize: true,
+    initialValues: {
+      name: mode === "edit" ? product?.name : "",
+      price: mode === "edit" ? product?.price : 0,
+      stock: mode === "edit" ? product?.stock : 0,
+      category: mode === "edit" ? product?.category : "Gadgets",
+    },
+    validationSchema: mode === "edit" ? editProductSchema : productSchema,
+    onSubmit: async (values) => {
+      if (mode === "add") {
+        addProduct(values as NewProduct);
+      } else {
+        editProduct(values as UpdateProduct);
+      }
+    },
+  });
+
+  return (
+    <main className="flex-1 layout-container flex h-full grow flex-col">
+      <div className="flex flex-1 justify-center items-center py-10 px-4">
+        <div
+          className="layout-content-container flex flex-col w-full max-w-4xl p-8 bg-[#0A0A0A] border border-[#f9f906] rounded-xl"
+          style={{ boxShadow: GLOW_SHADOW_CONTAINER }}
+        >
+          {/* Header */}
+          <div className="flex flex-wrap justify-between gap-3 mb-8">
+            <h1
+              className="text-[#f9f906] text-4xl font-black leading-tight tracking-[-0.033em] min-w-72"
+              style={{ textShadow: TEXT_SHADOW_HEADER }}
+            >
+              {mode === "add" ? "ADD NEW" : "EDIT"} PRODUCT
+            </h1>
+          </div>
+
+          {/* Form Grid */}
+          <form onSubmit={formik.handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Left Column (Inputs) */}
+              <div className="md:col-span-2 flex flex-col gap-6">
+                {/* Product Name */}
+                <label className="flex flex-col w-full">
+                  <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                    Product Name
+                  </p>
+                  <input
+                    name="name"
+                    className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
+                    style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.name && formik.errors.name && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formik.errors.name}
+                    </p>
+                  )}
+                </label>
+
+                {/* Price & Stock Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <label className="flex flex-col w-full">
+                    <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                      Price
+                    </p>
+                    <input
+                      name="price"
+                      type="number"
+                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
+                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                      value={formik.values.price}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.price && formik.errors.price && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {formik.errors.price}
+                      </p>
+                    )}
+                  </label>
+                  <label className="flex flex-col w-full">
+                    <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                      Stock
+                    </p>
+                    <input
+                      name="stock"
+                      type="number"
+                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
+                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                      value={formik.values.stock}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.stock && formik.errors.stock && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {formik.errors.stock}
+                      </p>
+                    )}
+                  </label>
+                </div>
+
+                {/* Category Select */}
+                <label className="flex flex-col w-full">
+                  <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                    Category
+                  </p>
+                  <div className="relative">
+                    <select
+                      name="category"
+                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 px-[15px] text-base font-normal leading-normal appearance-none cursor-pointer"
+                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                      value={formik.values.category}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    >
+                      {categories.map((category) => (
+                        <option value={category}>{category}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#f9f906]">
+                      <ExpandMoreIcon />
+                    </div>
+                  </div>
+                  {formik.touched.category && formik.errors.category && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formik.errors.category}
+                    </p>
+                  )}
+                </label>
+              </div>
+
+              {/* Right Column (Image Upload) */}
+              <div className="md:col-span-1 flex flex-col">
+                <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                  Product Image
+                </p>
+                <div
+                  className="relative group flex aspect-square w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#f9f906]/50 hover:border-[#f9f906] transition-colors bg-[#000000] overflow-hidden"
+                  style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                >
+                  <div
+                    className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-20 transition-opacity"
+                    style={{
+                      backgroundImage:
+                        "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkAnW36tO1e57JKh-OpTqDXL-HbAmwV7Q3ijYhUuLdZp4cfNwiwyytaqBD9tnhubBXv88u21Fq-46OFkWmOvihxGgt6-xRnDRztVu3CK-YAzG7kSym7o8cxprcoxZfHoQTcEv6kc5HrnTunFLcklvjta9IDZNoOi8naaCPpGrSkX3EjDQt7EaE8bVrCX0HFzsf7dR6aOJXJfDJbHaCoS7kzPxcp-tKVhdaWcdkLlWIP_fxHrbc237hxw2GCrGLLiBuC_89F30_Huw')",
+                    }}
+                  ></div>
+                  <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
+                    <div className="text-[#f9f906] opacity-80 group-hover:opacity-100 transition-opacity">
+                      <PhotoCameraIcon />
+                    </div>
+                    <p className="mt-2 text-sm font-semibold text-[#f9f906]/80 group-hover:text-[#f9f906] transition-colors">
+                      {mode === "add" ? "Add new" : "Change"} image
+                    </p>
+                    <p className="text-xs text-[#f9f906]/60">PNG, JPG, GIF</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="mt-10 flex flex-wrap justify-end gap-4">
+              <button
+                type="button"
+                className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#0A0A0A] px-6 py-2 text-base font-bold text-[#f9f906] ring-2 ring-[#f9f906] transition-all hover:bg-[#f9f906]/10"
+                onClick={() => navigate("/admin/products")}
+                disabled={addPending || editPending}
+              >
+                CANCEL
+              </button>
+              <button
+                type="submit"
+                disabled={formik.isSubmitting || addPending || editPending}
+                className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#f9f906] px-6 py-2 text-base font-bold text-[#0A0A0A] transition-all hover:brightness-110 shadow-[0_0_15px_rgba(249,249,6,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {formik.isSubmitting ? "SAVING..." : "SAVE CHANGES"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default AddEditProduct;

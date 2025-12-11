@@ -8,6 +8,8 @@ import Pos from "./pages/Pos";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./layouts/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
+import Products from "./pages/admin/Products";
+import AddEditProduct from "./pages/admin/AddEditProduct";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,9 @@ const App = () => {
             <Route element={<AdminLayout />}>
               <Route element={<ProtectedRoute />}>
                 <Route path="/admin" element={<Dashboard />} />
+                <Route path="/admin/products" element={<Products />} />
+                <Route path="/admin/products/add" element={<AddEditProduct />} />
+                <Route path="/admin/products/edit/:id" element={<AddEditProduct />} />
               </Route>
             </Route>
 
