@@ -9,6 +9,7 @@ import PaymentModal from "./FinalizePayment";
 import { createOrder } from "../../services/orderServices";
 import type { NewOrder, OrderItem } from "../../interfaces/orderInterface";
 import { Receipt } from "./Receipt";
+import { apiUrl } from "../../config";
 
 const CartSection = () => {
   const queryClient = useQueryClient();
@@ -117,7 +118,7 @@ const CartSection = () => {
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <div
                 className="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-14 shrink-0"
-                style={{ backgroundImage: `url("${item.product.image}")` }}
+                style={{ backgroundImage: `url("${apiUrl}${item.product.image}")` }}
               ></div>
               <div className="flex flex-col justify-center min-w-0">
                 <p className="text-[#f9f906] text-base font-medium leading-normal truncate">

@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProducts } from "../../services/productServices";
 import { useMemo } from "react";
-import type { Product } from "../../interfaces/authInterfaces";
 import Loader from "../Loader";
 import ProductCard from "./ProductCard";
 import { addItemToCart } from "../../services/cartServices";
+import type { Product } from "../../interfaces/productInterfaces";
 
 interface AddItemData {
   productId: number;
