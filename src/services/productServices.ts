@@ -31,7 +31,7 @@ export async function getProductById(id: number) {
   }
 }
 
-export async function createProduct(data: NewProduct) {
+export async function createProduct(data: FormData) {
   try {
     const response = await api.post("/api/products", data);
 
@@ -41,7 +41,7 @@ export async function createProduct(data: NewProduct) {
   }
 }
 
-export async function updateProduct(id: number, data: UpdateProduct) {
+export async function updateProduct(id: number, data: FormData) {
   try {
     const response = await api.put(`/api/products/${id}`, data);
 

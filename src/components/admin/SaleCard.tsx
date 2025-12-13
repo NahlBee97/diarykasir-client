@@ -2,6 +2,7 @@ import { useState } from "react";
 import { formatCurrency } from "../../helper/formatCurrentcy";
 import type { Order } from "../../interfaces/orderInterface";
 import OrderDetailsModal from "./DetailOrderModal";
+import { format } from "date-fns";
 
 const GLOW_BORDER_SUBTLE = "0 0 5px rgba(249, 249, 6, 0.3)";
 
@@ -15,7 +16,7 @@ const SaleCard = ({ order }: { order: Order }) => {
     >
       <div className="w-1/4 text-white font-medium">#{order.id}</div>
       <div className="w-1/4 text-[#f9f906]/80">
-        {order.createdAt.toString()}
+        {format(order.createdAt, "dd MMMM yyy")}
       </div>
       <div className="w-1/4 text-white font-semibold">
         {formatCurrency(order.totalAmount)}

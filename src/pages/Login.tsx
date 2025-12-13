@@ -19,7 +19,7 @@ const Login = () => {
       if (user.role === "CASHIER") {
         navigate("/pos", { replace: true });
       } else if (user.role === "ADMIN") {
-        navigate("/admin", { replace: true });
+        navigate("/admin/dashboard", { replace: true });
       }
     }
   }, [user, navigate]);

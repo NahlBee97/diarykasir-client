@@ -200,14 +200,14 @@ export const LogoutIcon = () => (
   </svg>
 );
 
-export const WarningIcon = () => (
+export const WarningIcon = ({ isRed = false }: { isRed?: boolean }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
     viewBox="0 0 24 24"
     fill="currentColor"
-    className="w-5 h-5 text-yellow-400"
+    className={`w-5 h-5 ${isRed ? "text-red-500" : "text-yellow-400"} `}
   >
     <path d="M12 2L1 21h22L12 2zm1 17h-2v-2h2v2zm0-4h-2v-6h2v6z" />
   </svg>

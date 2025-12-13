@@ -3,9 +3,19 @@ import { ExpandMoreIcon, PhotoCameraIcon } from "../../components/Icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { editProductSchema, productSchema } from "../../schemas/productSchema";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createProduct, deleteProduct, getProductById, updateProduct } from "../../services/productServices";
-import type { NewProduct, UpdateProduct } from "../../interfaces/productInterfaces";
+import {
+  createProduct,
+  getProductById,
+  updateProduct,
+} from "../../services/productServices";
+import type {
+  NewProduct,
+  UpdateProduct,
+} from "../../interfaces/productInterfaces";
+import { useState, useEffect } from "react"; // Added useEffect
+import { apiUrl } from "../../config";
 
+// ... (Your GLOW_SHADOW and categories constants remain the same) ...
 const GLOW_SHADOW_CONTAINER = "0 0 30px rgba(249,249,6,0.3)";
 const GLOW_SHADOW_INPUT = "0 0 10px rgba(249,249,6,0.2)";
 const TEXT_SHADOW_HEADER = "0 0 10px rgba(249,249,6,0.7)";
@@ -19,38 +29,65 @@ const AddEditProduct = () => {
   const pathSegments = location.pathname.split("/");
   const mode = pathSegments.includes("add") ? "add" : "edit";
 
+  // State to hold the selected File object and its preview URL
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const {
     data: product,
-    isLoading: productLoading,
+    isLoading: isProductLoading,
     error: productError,
   } = useQuery({
-    queryKey: ["product"],
+    queryKey: ["product", id], // Added id to queryKey for proper caching
     queryFn: () => getProductById(Number(id)),
+    enabled: mode === "edit" && !!id, // Only run if in edit mode and id exists
   });
 
+  // ⭐️ NEW: Set initial preview URL for 'edit' mode
+  useEffect(() => {
+    if (mode === "edit" && product?.image && !previewUrl) {
+      // eslint-disable-next-line
+      setPreviewUrl(apiUrl + product.image);
+    }
+  }, [mode, product?.image, previewUrl]);
+
+  // ⭐️ CHANGE: Mutation now accepts FormData which includes the file
   const { mutate: addProduct, isPending: addPending } = useMutation({
-    mutationFn: async (data: NewProduct) => {
-      return createProduct(data);
+    mutationFn: async (formData: FormData) => {
+      // Your createProduct service must be updated to accept and handle FormData
+      return createProduct(formData);
     },
     onSuccess: () => {
       navigate("/admin/products");
     },
     onError: (error) => {
-      alert("Error: " + error);
+      alert("Error: " + error.message);
     },
   });
 
+  // ⭐️ CHANGE: Mutation now accepts FormData which includes the file
   const { mutate: editProduct, isPending: editPending } = useMutation({
-    mutationFn: async (data: UpdateProduct) => {
-      return updateProduct(product.id, data);
+    mutationFn: async (formData: FormData) => {
+      // Your updateProduct service must be updated to accept and handle FormData
+      return updateProduct(product!.id, formData);
     },
     onSuccess: () => {
       navigate("/admin/products");
     },
     onError: (error) => {
-      alert("Error: " + error);
+      alert("Error: " + error.message);
     },
   });
+
+  // Function to handle file input change (ALREADY CORRECT)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      // Create a local URL for image preview
+      setPreviewUrl(URL.createObjectURL(selectedFile));
+    }
+  };
 
   const formik = useFormik<NewProduct | UpdateProduct>({
     enableReinitialize: true,
@@ -58,17 +95,43 @@ const AddEditProduct = () => {
       name: mode === "edit" ? product?.name : "",
       price: mode === "edit" ? product?.price : 0,
       stock: mode === "edit" ? product?.stock : 0,
-      category: mode === "edit" ? product?.category : "Gadgets",
+      category: mode === "edit" ? product?.category : categories[0],
     },
     validationSchema: mode === "edit" ? editProductSchema : productSchema,
+    // ⭐️ CHANGE: Updated onSubmit to use FormData and include the file
     onSubmit: async (values) => {
+      // 1. Create FormData object
+      const formData = new FormData();
+
+      // 2. Append all form values
+      formData.append("name", values.name as string);
+      formData.append("price", String(values.price)); // Convert to string for FormData
+      formData.append("stock", String(values.stock));
+      formData.append("category", values.category as string);
+
+      // 3. Append the image file if selected
+      if (file) {
+        formData.append("file", file); // 'productImage' is the key your server will look for
+      }
+      // 4. Handle existing image URL for edit mode if no new file is uploaded
+      else if (mode === "edit" && product?.image) {
+        formData.append("file", product.image); // Pass the old URL if no change
+      }
+
+      // 5. Call the appropriate mutation with FormData
       if (mode === "add") {
-        addProduct(values as NewProduct);
+        addProduct(formData);
       } else {
-        editProduct(values as UpdateProduct);
+        editProduct(formData);
       }
     },
   });
+
+  const finalPreviewUrl = previewUrl
+    ? previewUrl
+    : mode === "edit" && product?.image
+    ? product.image
+    : "https://lh3.googleusercontent.com/aida-public/AB6AXuBkAnW36tO1e57JKh-OpTqDXL-HbAmwV7Q3ijYhUuLdZp4cfNwiwyytaqBD9tnhubBXv88u21Fq-46OFkWmOvihxGgt6-xRnDRztVu3CK-YAzG7kSym7o8cxprcoxZfHoQTcEv6kc5HrnTunFLcklvjta9IDZNoOi8naaCPpGrSkX3EjDQt7EaE8bVrCX0HFzsf7dR6aOJXJfDJbHaCoS7kzPxcp-tKVhdaWcdkLlWIP_fxHrbc237hxw2GCrGLLiBuC_89F30_Huw"; // Fallback for Add Mode
 
   return (
     <main className="flex-1 layout-container flex h-full grow flex-col">
@@ -90,7 +153,8 @@ const AddEditProduct = () => {
           {/* Form Grid */}
           <form onSubmit={formik.handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Left Column (Inputs) */}
+              {/* Left Column (Inputs) - NO CHANGES HERE */}
+              {/* ... (Your left column inputs for name, price, stock, category) ... */}
               <div className="md:col-span-2 flex flex-col gap-6">
                 {/* Product Name */}
                 <label className="flex flex-col w-full">
@@ -169,7 +233,9 @@ const AddEditProduct = () => {
                       onBlur={formik.handleBlur}
                     >
                       {categories.map((category) => (
-                        <option value={category}>{category}</option>
+                        <option key={category} value={category}>
+                          {category}
+                        </option>
                       ))}
                     </select>
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#f9f906]">
@@ -184,20 +250,23 @@ const AddEditProduct = () => {
                 </label>
               </div>
 
-              {/* Right Column (Image Upload) */}
+              {/* Right Column (Image Upload) - ⭐️ CHANGES HERE */}
               <div className="md:col-span-1 flex flex-col">
                 <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
                   Product Image
                 </p>
-                <div
+                {/* Wrap the clickable area with a label to connect it to the hidden input */}
+                <label
+                  htmlFor="file-upload" // Connects to the input below
                   className="relative group flex aspect-square w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#f9f906]/50 hover:border-[#f9f906] transition-colors bg-[#000000] overflow-hidden"
                   style={{ boxShadow: GLOW_SHADOW_INPUT }}
                 >
+                  {/* Image Preview */}
+                  {/* ⭐️ Use finalPreviewUrl for the background image */}
                   <div
                     className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-20 transition-opacity"
                     style={{
-                      backgroundImage:
-                        "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBkAnW36tO1e57JKh-OpTqDXL-HbAmwV7Q3ijYhUuLdZp4cfNwiwyytaqBD9tnhubBXv88u21Fq-46OFkWmOvihxGgt6-xRnDRztVu3CK-YAzG7kSym7o8cxprcoxZfHoQTcEv6kc5HrnTunFLcklvjta9IDZNoOi8naaCPpGrSkX3EjDQt7EaE8bVrCX0HFzsf7dR6aOJXJfDJbHaCoS7kzPxcp-tKVhdaWcdkLlWIP_fxHrbc237hxw2GCrGLLiBuC_89F30_Huw')",
+                      backgroundImage: `url('${finalPreviewUrl}')`, // ⭐️ UPDATED TO USE finalPreviewUrl
                     }}
                   ></div>
                   <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
@@ -208,12 +277,21 @@ const AddEditProduct = () => {
                       {mode === "add" ? "Add new" : "Change"} image
                     </p>
                     <p className="text-xs text-[#f9f906]/60">PNG, JPG, GIF</p>
+                    <input
+                      id="file-upload"
+                      name="file-upload"
+                      type="file"
+                      className="sr-only"
+                      onChange={handleFileChange} // Existing handler is correct
+                      accept="image/*"
+                    />
                   </div>
-                </div>
+                </label>
               </div>
             </div>
 
             {/* Action Buttons */}
+            {/* ... (Your action buttons remain the same) ... */}
             <div className="mt-10 flex flex-wrap justify-end gap-4">
               <button
                 type="button"
@@ -225,7 +303,13 @@ const AddEditProduct = () => {
               </button>
               <button
                 type="submit"
-                disabled={formik.isSubmitting || addPending || editPending}
+                // The form is ready to submit if either file is present (add) or form has changes (edit)
+                disabled={
+                  formik.isSubmitting ||
+                  addPending ||
+                  editPending ||
+                  (mode === "add" && !file)
+                }
                 className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#f9f906] px-6 py-2 text-base font-bold text-[#0A0A0A] transition-all hover:brightness-110 shadow-[0_0_15px_rgba(249,249,6,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {formik.isSubmitting ? "SAVING..." : "SAVE CHANGES"}

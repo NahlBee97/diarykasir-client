@@ -5,6 +5,7 @@ import {
   DeleteIcon,
   EditIcon,
   SearchIcon,
+  WarningIcon,
 } from "../../components/Icons";
 
 import { GLOW_BORDER, GLOW_TEXT } from "./Dashboard";
@@ -14,6 +15,7 @@ import Loader from "../../components/Loader";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../../interfaces/productInterfaces";
+import { apiUrl } from "../../config";
 
 const Products = () => {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ const Products = () => {
 
   const {
     data: products = [],
-    isLoading: productLoading,
+    isLoading: isProductLoading,
     error: productError,
   } = useQuery({
     queryKey: ["products"],
@@ -42,8 +44,6 @@ const Products = () => {
       alert("Error: " + error);
     },
   });
-
-  // const handleDelete =
 
   // Filter items
   const filteredItems: Product[] = useMemo(() => {
@@ -100,7 +100,7 @@ const Products = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="border-b border-[#f9f906]/20">
-              {!productError && !productLoading && (
+              {!productError && !isProductLoading && (
                 <tr>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
                     Image
@@ -130,9 +130,9 @@ const Products = () => {
               )}
             </thead>
             <tbody>
-              {productLoading || productError ? (
+              {isProductLoading || productError ? (
                 <div className="w-full min-h-screen flex flex-col gap-1 justify-center items-center">
-                  <Loader size="md" />
+                  {productError ? <WarningIcon /> : <Loader size="md" />}
                   <p>
                     {productError
                       ? "Error Loading Products"
@@ -149,7 +149,7 @@ const Products = () => {
                       <td className="p-4 text-sm text-white/90">
                         <img
                           className="w-10 h-10 rounded-sm"
-                          src=""
+                          src={apiUrl + product.image}
                           alt="product image"
                         />
                       </td>

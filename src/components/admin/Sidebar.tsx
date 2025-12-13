@@ -13,7 +13,7 @@ const GLOW_BORDER = "0 0 1px #f9f906, 0 0 4px #f9f906, 0 0 8px #f9f906";
 const GLOW_TEXT = "0 0 2px #f9f906, 0 0 5px #f9f906";
 
 const navLinks = [
-  { label: "Dashboard", link: "/admin", icon: <DashboardIcon/> },
+  { label: "Dashboard", link: "/admin/dashboard", icon: <DashboardIcon/> },
   { label: "Products", link: "/admin/products", icon: <InventoryIcon/> },
   { label: "Sales", link: "/admin/sales", icon: <ReceiptIcon/> },
   { label: "Report", link: "/admin/report", icon: <AssessmentIcon/> },

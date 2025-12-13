@@ -3,8 +3,9 @@ import LowStockTable from "../../components/admin/LowStockTable";
 import StatsCard from "../../components/admin/StatCard";
 import { getTodayOrders } from "../../services/orderServices";
 import { formatCurrency } from "../../helper/formatCurrentcy";
-import type { Order, Product } from "../../interfaces/authInterfaces";
 import { getProducts } from "../../services/productServices";
+import type { Order } from "../../interfaces/orderInterface";
+import type { Product } from "../../interfaces/productInterfaces";
 
 export const GLOW_BORDER = "0 0 1px #f9f906, 0 0 4px #f9f906, 0 0 8px #f9f906";
 export const GLOW_TEXT = "0 0 2px #f9f906, 0 0 5px #f9f906";
@@ -12,7 +13,7 @@ export const GLOW_TEXT = "0 0 2px #f9f906, 0 0 5px #f9f906";
 const Dashboard = () => {
   const {
     data: todayOrders = [],
-    isLoading: orderLoading,
+    isLoading: isOrderLoading,
     error: orderError,
   } = useQuery({
     queryKey: ["todayOrders"],
@@ -21,7 +22,7 @@ const Dashboard = () => {
 
   const {
     data: products = [],
-    isLoading: productsLoading,
+    isLoading: isProductsLoading,
     error: productsError,
   } = useQuery({
     queryKey: ["products"],
@@ -43,7 +44,6 @@ const Dashboard = () => {
   const lowStockProducts = products.filter(
     (product: Product) => product.stock < 10
   );
-  console.log("Low stock products:", lowStockProducts);
 
   return (
     <main className="flex flex-1 flex-col">
@@ -63,19 +63,19 @@ const Dashboard = () => {
           <StatsCard
             title="TODAY'S REVENUE"
             value={formatCurrency(todayTotal)}
-            isLoading={orderLoading}
+            isLoading={isOrderLoading}
             isError={!!orderError}
           />
           <StatsCard
             title="TRANSACTIONS TODAY"
             value={todayOrders.length}
-            isLoading={orderLoading}
+            isLoading={isOrderLoading}
             isError={!!orderError}
           />
           <StatsCard
             title="TOTAL ITEMS SOLD"
             value={totalItemsSold}
-            isLoading={orderLoading}
+            isLoading={isOrderLoading}
             isError={!!orderError}
           />
         </div>
@@ -88,7 +88,7 @@ const Dashboard = () => {
           >
             LOW STOCK ALERTS
           </h2>
-          <LowStockTable data={lowStockProducts} />
+          <LowStockTable data={lowStockProducts} isLoading={isProductsLoading} isError={!!productsError} />
         </div>
       </div>
     </main>
