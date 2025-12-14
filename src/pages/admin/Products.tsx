@@ -9,6 +9,7 @@ import {
 } from "../../components/Icons";
 
 import { GLOW_BORDER, GLOW_TEXT } from "./Dashboard";
+// Make sure to update your productServices file
 import { deleteProduct, getProducts } from "../../services/productServices";
 import { formatCurrency } from "../../helper/formatCurrentcy";
 import Loader from "../../components/Loader";
@@ -21,16 +22,27 @@ const Products = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
+  // 1. ADD PAGINATION STATE
+  const [page, setPage] = useState<number>(1);
+
   const queryClient = useQueryClient();
 
+  // 2. UPDATE useQuery for Pagination
   const {
-    data: products = [],
+    data: queryResult, // Holds the result object: { products, totalPages, currentPage }
     isLoading: isProductLoading,
     error: productError,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => getProducts(),
+    // Add page and take to the key to trigger refetch on page change
+    queryKey: ["products", page],
+    // Pass the pagination parameters to the service function
+    queryFn: () => getProducts(page),
   });
+
+  // Extract products and pagination metadata
+  const products: Product[] = queryResult?.products || [];
+  const totalPages: number = queryResult?.totalPages || 1;
+  const currentPage: number = queryResult?.currentPage || 1;
 
   const { mutate: deleteItem, isPending: deletePending } = useMutation({
     mutationFn: async (id: number) => {
@@ -45,9 +57,9 @@ const Products = () => {
     },
   });
 
-  // Filter items
+  // Filter items (Filtering now operates ONLY on the current page's data)
   const filteredItems: Product[] = useMemo(() => {
-    return products.length > 0
+    return products.length > 0 && searchQuery
       ? products.filter(
           (product: Product) =>
             product.isActive === true &&
@@ -56,12 +68,21 @@ const Products = () => {
               .includes(searchQuery.toLowerCase()) ||
               product.name.toLowerCase().includes(searchQuery.toLowerCase()))
         )
-      : [];
+      : products;
   }, [searchQuery, products]);
+
+  // Handle page navigation
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+      // Optional: Clear search query on page change if search is global,
+      // but since we only filter the current page, keeping it may be fine.
+    }
+  };
 
   return (
     <main className="flex flex-1 flex-col p-6 lg:p-10">
-      {/* Header */}
+      {/* Header and Search remain the same */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <h1
           className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
@@ -94,12 +115,13 @@ const Products = () => {
 
       {/* Table Container */}
       <div
-        className="overflow-hidden rounded-xl border border-[#f9f906]/50 bg-[#0A0A0A]"
+        className="overflow-hidden rounded-xl border border-[#f9f906]/50 bg-[#0A0A0A] flex-1 flex flex-col"
         style={{ boxShadow: GLOW_BORDER }}
       >
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-1">
           <table className="w-full text-left">
             <thead className="border-b border-[#f9f906]/20">
+              {/* Table Headers remain the same */}
               {!productError && !isProductLoading && (
                 <tr>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
@@ -131,14 +153,28 @@ const Products = () => {
             </thead>
             <tbody>
               {isProductLoading || productError ? (
-                <div className="w-full min-h-screen flex flex-col gap-1 justify-center items-center">
-                  {productError ? <WarningIcon /> : <Loader size="md" />}
-                  <p>
-                    {productError
-                      ? "Error Loading Products"
-                      : "Loading Products..."}
-                  </p>
-                </div>
+                // Loading/Error state inside the table body
+                <tr>
+                  <td colSpan={8} className="p-10 text-center">
+                    <div className="flex flex-col gap-3 justify-center items-center">
+                      {productError ? <WarningIcon /> : <Loader size="md" />}
+                      <p className="text-white">
+                        {productError
+                          ? "Error Loading Products"
+                          : "Loading Products..."}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredItems.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="p-10 text-center text-[#f9f906]/70"
+                  >
+                    No products found for the current page/search criteria.
+                  </td>
+                </tr>
               ) : (
                 <>
                   {filteredItems.map((product: Product) => (
@@ -146,9 +182,10 @@ const Products = () => {
                       key={product.id}
                       className="border-b border-[#f9f906]/10 last:border-none hover:bg-white/5 transition-colors"
                     >
+                      {/* Table Cells remain the same */}
                       <td className="p-4 text-sm text-white/90">
                         <img
-                          className="w-10 h-10 rounded-sm"
+                          className="w-10 h-10 rounded-sm object-cover"
                           src={apiUrl + product.image}
                           alt="product image"
                         />
@@ -208,6 +245,30 @@ const Products = () => {
             </tbody>
           </table>
         </div>
+
+        {/* 3. PAGINATION CONTROLS */}
+        {!isProductLoading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 py-4 px-4 border-t border-[#f9f906]/20">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 text-sm font-medium text-black bg-[#f9f906] rounded-md disabled:opacity-50 transition-colors hover:bg-[#f9f906]/80"
+            >
+              Previous
+            </button>
+            <span className="text-white">
+              Page <strong className="text-[#f9f906]">{currentPage}</strong> of{" "}
+              <strong className="text-[#f9f906]">{totalPages}</strong>
+            </span>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 text-sm font-medium text-black bg-[#f9f906] rounded-md disabled:opacity-50 transition-colors hover:bg-[#f9f906]/80"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

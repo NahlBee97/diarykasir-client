@@ -1,25 +1,39 @@
-import type { NewProduct, UpdateProduct } from "../interfaces/productInterfaces";
 import api from "../lib/axios";
 
-export async function getProducts() {
+export const getProducts = async (
+  page: number = 1,
+) => {
   try {
-    const response = await api.get("/api/products");
+    const response = await api.get("/api/products", {
+      params: {
+        page: page.toString(),
+      },
+    });
 
+    return response.data.productsData;
+  } catch (error) {
+    console.error("Error fetching paginated products with Axios:", error);
+    throw new Error("Failed to fetch products.");
+  }
+};
+
+export const getTopProducts = async (
+  start: string,
+  end: string
+) => {
+  try {
+    const response = await api.get(
+      "/api/products/top",
+      {
+        params: { start, end },
+      }
+    );
     return response.data.products;
   } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error("Error fetching top products:", error);
+    throw new Error("Failed to fetch top products.");
   }
-}
-
-export async function getTopProducts() {
-  try {
-    const response = await api.get("/api/products/top");
-
-    return response.data.products;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-  }
-}
+};
 
 export async function getProductById(id: number) {
   try {
