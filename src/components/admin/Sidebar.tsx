@@ -13,17 +13,15 @@ const GLOW_BORDER = "0 0 1px #f9f906, 0 0 4px #f9f906, 0 0 8px #f9f906";
 const GLOW_TEXT = "0 0 2px #f9f906, 0 0 5px #f9f906";
 
 const navLinks = [
-  { label: "Dashboard", link: "/admin/dashboard", icon: <DashboardIcon/> },
-  { label: "Products", link: "/admin/products", icon: <InventoryIcon/> },
-  { label: "Sales", link: "/admin/sales", icon: <ReceiptIcon/> },
-  { label: "Report", link: "/admin/report", icon: <AssessmentIcon/> },
+  { label: "Penjualan Hari Ini", link: "/admin", icon: <DashboardIcon/> },
+  { label: "Pengaturan Produk", link: "/admin/products", icon: <InventoryIcon/> },
+  { label: "Riwayat Penjualan", link: "/admin/sales", icon: <ReceiptIcon/> },
+  { label: "Laporan Penjualan", link: "/admin/report", icon: <AssessmentIcon/> },
 ];
 
 const Sidebar = () => {
   const { logout } = useAuth();
   const { pathname } = useLocation();
-
-  const pathSegments = pathname.split("/");
 
   return (
     <aside className="w-64 min-h-screen md:flex-col gap-8 border-r border-[#f9f906]/20 bg-black p-4 shrink-0 hidden md:flex">
@@ -48,8 +46,7 @@ const Sidebar = () => {
           {navLinks.map((navLink) => (
             <Link
               key={navLink.label}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 ${
-                pathSegments.includes(navLink.label.toLowerCase())
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 ${pathname === navLink.link
                   ? "bg-[#f9f906]/20 text-[#f9f906]"
                   : "text-white/70 hover:bg-[#f9f906]/10 hover:text-white transition-colors"
               }`}
@@ -68,7 +65,7 @@ const Sidebar = () => {
             onClick={() => logout()}
           >
             <LogoutIcon />
-            <p className="text-sm font-medium leading-normal">Logout</p>
+            <p className="text-sm font-medium leading-normal">Keluar</p>
           </button>
         </div>
       </nav>

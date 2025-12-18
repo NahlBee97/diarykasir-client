@@ -1,4 +1,5 @@
 import { apiUrl } from "../../config";
+import { formatCurrency } from "../../helper/formatCurrentcy";
 import type { Product } from "../../interfaces/productInterfaces";
 
 interface ProductCardProps {
@@ -20,11 +21,11 @@ const ProductCard = ({ item, onClick, disabled }: ProductCardProps) => {
       }}
     >
       <div className="relative z-10">
-        <p className="text-[#f9f906] text-lg font-bold leading-tight line-clamp-2 drop-shadow-md">
+        <p className="text-[#f9f906] text-sm font-bold leading-tight drop-shadow-md">
           {item.name}
         </p>
         <p className="text-white text-base font-medium">
-          Rp. {Number(item.price).toLocaleString("id-ID")}
+          {formatCurrency(item.price)}
         </p>
       </div>
     </div>

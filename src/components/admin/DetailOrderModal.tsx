@@ -4,7 +4,7 @@ import { formatCurrency } from "../../helper/formatCurrentcy";
 // --- Style Constants ---
 
 const PRIMARY_COLOR = "#f9f906";
-const BACKGROUND_DARK = "#23230f"; // Used for text-background-dark utility
+// const BACKGROUND_DARK = "#23230f"; // Used for text-background-dark utility
 const MODAL_BG = "#0a0a00";
 const GLOW_SHADOW = "0 0 5px #f9f906, 0 0 10px #f9f906, 0 0 15px #f9f906";
 const GLOW_TEXT = "0 0 4px #f9f906";
@@ -23,7 +23,7 @@ const OrderDetailsModal = ({
   isOpen,
   order,
   onClose,
-  onReprint,
+  // onReprint,
 }: props) => {
   if (!isOpen) return null;
 
@@ -96,7 +96,7 @@ const OrderDetailsModal = ({
 
         {/* Button Group */}
         <div className="flex flex-1 gap-3 flex-wrap p-6 pt-2 justify-between">
-          <button
+          {/* <button
             onClick={onReprint}
             className="flex flex-1 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 text-base font-bold leading-normal tracking-[0.015em] transition-all hover:brightness-110"
             style={{
@@ -105,7 +105,7 @@ const OrderDetailsModal = ({
             }}
           >
             <span className="truncate">REPRINT RECEIPT</span>
-          </button>
+          </button> */}
           <button
             onClick={onClose}
             className="flex flex-1 min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-transparent border text-base font-bold leading-normal tracking-[0.015em] transition-all"

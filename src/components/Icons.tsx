@@ -301,3 +301,47 @@ export const DownloadIcon = () => (
   </svg>
 );
 
+export const CloseIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-8 h-8"
+  >
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </svg>
+);
+
+export const ShoppingBasketIcon = () => (
+  <svg
+    className="text-[#f9f906]"
+    fill="none"
+    height="100%"
+    style={{ filter: "drop-shadow(0 0 10px #f9f906)" }}
+    viewBox="0 0 24 24"
+    width="100%"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M5.14286 10H18.8571L20 22H4L5.14286 10Z"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+    />
+    <path
+      d="M7 10L9.42857 2H14.5714L17 10"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+    />
+  </svg>
+);

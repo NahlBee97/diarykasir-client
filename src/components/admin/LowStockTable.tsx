@@ -15,9 +15,14 @@ const LowStockTable = ({ data, isLoading, isError }: props) => (
     style={{ boxShadow: GLOW_BORDER }}
   >
     <div className="overflow-x-auto">
-      <table className="w-full text-left">
-        <thead className="border-b border-[#f9f906]/20">
-          {(!isLoading && !isError) && (
+      {isLoading || isError ? (
+        <div className="w-full min-h-80 flex flex-col gap-1 justify-center items-center">
+          {isError ? <WarningIcon /> : <Loader size="md" />}
+          <p>{isError ? "Error Loading Products" : "Loading Products..."}</p>
+        </div>
+      ) : (
+        <table className="w-full min-h-80 text-left">
+          <thead className="border-b border-[#f9f906]/20">
             <tr>
               <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
                 Id #
@@ -32,42 +37,29 @@ const LowStockTable = ({ data, isLoading, isError }: props) => (
                 Status
               </th>
             </tr>
-          )}
-        </thead>
-        <tbody>
-          {isLoading || isError ? (
-            <div className="w-full h-80 flex flex-col gap-1 justify-center items-center">
-              {isError ? <WarningIcon/> : <Loader size="md" />}
-              <p>
-                {isError ? "Error Loading Products" : "Loading Products..."}
-              </p>
-            </div>
-          ) : (
-            <>
-              {data.map((product: Product) => (
-                <tr key={product.id} className="border-b border-[#f9f906]/10">
-                  <td className="p-4 text-sm text-white/70">{product.id}</td>
-                  <td className="p-4 text-sm text-white/90">{product.name}</td>
-                  <td className="p-4 text-sm text-white/90 text-center">
-                    {product.stock}
-                  </td>
-                  <td className="p-4 text-sm text-center">
-                    <div className="flex items-center justify-center gap-2 text-yellow-400">
-                      <span className="animate-pulse">
-                        {product.stock < 5 ? <ErrorIcon /> : <WarningIcon />}
-                      </span>
+          </thead>
+          <tbody>
+            {data.map((product: Product) => (
+              <tr key={product.id} className="border-b border-[#f9f906]/10">
+                <td className="p-4 text-sm text-white/70">{product.id}</td>
+                <td className="p-4 text-sm text-white/90">{product.name}</td>
+                <td className="p-4 text-sm text-white/90 text-center">
+                  {product.stock}
+                </td>
+                <td className="p-4 text-sm text-center">
+                  <div className="flex items-center justify-center gap-2 text-yellow-400">
+                    <span className="animate-pulse">
+                      {product.stock < 5 ? <ErrorIcon /> : <WarningIcon />}
+                    </span>
 
-                      <span>
-                        {product.stock < 5 ? "Critical" : "Low Stock"}
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </>
-          )}
-        </tbody>
-      </table>
+                    <span>{product.stock < 5 ? "Critical" : "Low Stock"}</span>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   </div>
 );

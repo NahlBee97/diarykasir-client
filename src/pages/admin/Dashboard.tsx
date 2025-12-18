@@ -48,26 +48,26 @@ const Dashboard = () => {
             className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
             style={{ textShadow: GLOW_TEXT }}
           >
-            Dashboard Overview
+            PENJUALAN HARI INI
           </h1>
         </div>
 
         {/* Stats Grid */}
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <StatsCard
-            title="TODAY'S REVENUE"
+            title="OMSET HARI INI"
             value={formatCurrency(todayTotal)}
             isLoading={isOrderLoading}
             isError={!!orderError}
           />
           <StatsCard
-            title="TRANSACTIONS TODAY"
+            title="JUMLAH TRAKSAKSI"
             value={todayOrders.length}
             isLoading={isOrderLoading}
             isError={!!orderError}
           />
           <StatsCard
-            title="TOTAL ITEMS SOLD"
+            title="TOTAL ITEM TERJUAL"
             value={totalItemsSold}
             isLoading={isOrderLoading}
             isError={!!orderError}
@@ -80,7 +80,7 @@ const Dashboard = () => {
             className="text-[#f9f906] text-[22px] font-bold leading-tight tracking-[-0.015em]"
             style={{ textShadow: GLOW_TEXT }}
           >
-            LOW STOCK ALERTS
+            PRODUK STOK RENDAH
           </h2>
           <LowStockTable data={products} isLoading={isProductsLoading} isError={!!productsError} />
         </div>

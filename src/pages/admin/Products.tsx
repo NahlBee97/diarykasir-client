@@ -57,7 +57,6 @@ const Products = () => {
     },
   });
 
-  // Filter items (Filtering now operates ONLY on the current page's data)
   const filteredItems: Product[] = useMemo(() => {
     return products.length > 0 && searchQuery
       ? products.filter(
@@ -66,6 +65,10 @@ const Products = () => {
             (product.category
               .toLowerCase()
               .includes(searchQuery.toLowerCase()) ||
+              product.category
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())) &&
+            (product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
               product.name.toLowerCase().includes(searchQuery.toLowerCase()))
         )
       : products;
@@ -88,7 +91,7 @@ const Products = () => {
           className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
           style={{ textShadow: GLOW_TEXT }}
         >
-          Inventory Management
+          PENGATURAN PRODUK
         </h1>
         <div className="flex items-center gap-4">
           <div className="relative w-full max-w-sm">
@@ -97,7 +100,7 @@ const Products = () => {
             </div>
             <input
               className="w-full bg-[#23230f] border border-[#f9f906]/30 rounded-lg py-2 pl-10 pr-4 text-white placeholder:text-[#f9f906]/50 focus:ring-[#f9f906] focus:border-[#f9f906] outline-none transition-shadow duration-300 focus:shadow-[0_0_10px_rgba(249,249,6,0.3)]"
-              placeholder="Search product..."
+              placeholder="Cari Produk..."
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -108,7 +111,7 @@ const Products = () => {
             onClick={() => navigate("/admin/products/add")}
           >
             <AddIcon />
-            <span>Add Product</span>
+            <span>Tambah</span>
           </button>
         </div>
       </div>
@@ -125,28 +128,28 @@ const Products = () => {
               {!productError && !isProductLoading && (
                 <tr>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
-                    Image
+                    # ID
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
-                    Product Name
+                    Gambar
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
-                    ID
+                    Nama
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
-                    Category
+                    Kategori
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70 text-right">
-                    Price
+                    Harga
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70 text-right">
-                    Stock
+                    Stok
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70 text-center">
                     Status
                   </th>
                   <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70 text-center">
-                    Actions
+                    Tindakan
                   </th>
                 </tr>
               )}
@@ -183,6 +186,9 @@ const Products = () => {
                       className="border-b border-[#f9f906]/10 last:border-none hover:bg-white/5 transition-colors"
                     >
                       {/* Table Cells remain the same */}
+                      <td className="p-4 text-sm text-white/70">
+                        {product.id}
+                      </td>
                       <td className="p-4 text-sm text-white/90">
                         <img
                           className="w-10 h-10 rounded-sm object-cover"
@@ -192,9 +198,6 @@ const Products = () => {
                       </td>
                       <td className="p-4 text-sm text-white/90">
                         {product.name}
-                      </td>
-                      <td className="p-4 text-sm text-white/70">
-                        {product.id}
                       </td>
                       <td className="p-4 text-sm text-white/70">
                         {product.category}

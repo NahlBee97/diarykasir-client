@@ -26,7 +26,7 @@ const SaleCard = ({ order }: { order: Order }) => {
           className="bg-[#f9f906] text-black font-bold text-sm leading-normal tracking-wide px-6 py-2 rounded-md hover:brightness-110 transition-all"
           onClick={() => setIsOpen(true)}
         >
-          VIEW DETAIL
+          RINCIAN
         </button>
       </div>
       <OrderDetailsModal

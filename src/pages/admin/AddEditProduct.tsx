@@ -131,7 +131,7 @@ const AddEditProduct = () => {
     ? previewUrl
     : mode === "edit" && product?.image
     ? product.image
-    : "https://lh3.googleusercontent.com/aida-public/AB6AXuBkAnW36tO1e57JKh-OpTqDXL-HbAmwV7Q3ijYhUuLdZp4cfNwiwyytaqBD9tnhubBXv88u21Fq-46OFkWmOvihxGgt6-xRnDRztVu3CK-YAzG7kSym7o8cxprcoxZfHoQTcEv6kc5HrnTunFLcklvjta9IDZNoOi8naaCPpGrSkX3EjDQt7EaE8bVrCX0HFzsf7dR6aOJXJfDJbHaCoS7kzPxcp-tKVhdaWcdkLlWIP_fxHrbc237hxw2GCrGLLiBuC_89F30_Huw"; // Fallback for Add Mode
+    : "";
 
   return (
     <main className="flex-1 layout-container flex h-full grow flex-col">
@@ -146,7 +146,7 @@ const AddEditProduct = () => {
               className="text-[#f9f906] text-4xl font-black leading-tight tracking-[-0.033em] min-w-72"
               style={{ textShadow: TEXT_SHADOW_HEADER }}
             >
-              {mode === "add" ? "ADD NEW" : "EDIT"} PRODUCT
+              {mode === "add" ? "TAMBAH" : "EDIT"} PRODUK
             </h1>
           </div>
 
@@ -159,7 +159,7 @@ const AddEditProduct = () => {
                 {/* Product Name */}
                 <label className="flex flex-col w-full">
                   <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                    Product Name
+                    Nama
                   </p>
                   <input
                     name="name"
@@ -180,7 +180,7 @@ const AddEditProduct = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <label className="flex flex-col w-full">
                     <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      Price
+                      Harga
                     </p>
                     <input
                       name="price"
@@ -199,7 +199,7 @@ const AddEditProduct = () => {
                   </label>
                   <label className="flex flex-col w-full">
                     <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      Stock
+                      Stok
                     </p>
                     <input
                       name="stock"
@@ -221,7 +221,7 @@ const AddEditProduct = () => {
                 {/* Category Select */}
                 <label className="flex flex-col w-full">
                   <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                    Category
+                    Kategori
                   </p>
                   <div className="relative">
                     <select
@@ -253,7 +253,7 @@ const AddEditProduct = () => {
               {/* Right Column (Image Upload) - ⭐️ CHANGES HERE */}
               <div className="md:col-span-1 flex flex-col">
                 <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                  Product Image
+                  Gambar
                 </p>
                 {/* Wrap the clickable area with a label to connect it to the hidden input */}
                 <label
@@ -263,20 +263,25 @@ const AddEditProduct = () => {
                 >
                   {/* Image Preview */}
                   {/* ⭐️ Use finalPreviewUrl for the background image */}
+                  <img
+                    src={finalPreviewUrl}
+                    className="absolute w-full h-full inset-0 bg-cover bg-center group-hover:opacity-20 transition-opacity"
+                  />
                   <div
-                    className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-20 transition-opacity"
-                    style={{
-                      backgroundImage: `url('${finalPreviewUrl}')`, // ⭐️ UPDATED TO USE finalPreviewUrl
-                    }}
-                  ></div>
-                  <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
-                    <div className="text-[#f9f906] opacity-80 group-hover:opacity-100 transition-opacity">
+                    className={`relative flex flex-col items-center justify-center text-center p-4 ${
+                      finalPreviewUrl ? "opacity-20" : "opacity-60"
+                    } group-hover:opacity-100 transition-opacity`}
+                  >
+                    <div className="text-[#f9f906] ">
                       <PhotoCameraIcon />
                     </div>
-                    <p className="mt-2 text-sm font-semibold text-[#f9f906]/80 group-hover:text-[#f9f906] transition-colors">
-                      {mode === "add" ? "Add new" : "Change"} image
+                    <p className="mt-2 text-sm font-semibold text-[#f9f906]">
+                      {mode === "add" && !finalPreviewUrl
+                        ? "Tambah"
+                        : "Ganti"}{" "}
+                      Gambar
                     </p>
-                    <p className="text-xs text-[#f9f906]/60">PNG, JPG, GIF</p>
+                    <p className="text-xs text-[#f9f906]">PNG, JPG, GIF</p>
                     <input
                       id="file-upload"
                       name="file-upload"
@@ -299,7 +304,7 @@ const AddEditProduct = () => {
                 onClick={() => navigate("/admin/products")}
                 disabled={addPending || editPending}
               >
-                CANCEL
+                BATAL
               </button>
               <button
                 type="submit"
@@ -312,7 +317,7 @@ const AddEditProduct = () => {
                 }
                 className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#f9f906] px-6 py-2 text-base font-bold text-[#0A0A0A] transition-all hover:brightness-110 shadow-[0_0_15px_rgba(249,249,6,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {formik.isSubmitting ? "SAVING..." : "SAVE CHANGES"}
+                {formik.isSubmitting ? "MENYIMPAN..." : "SIMPAN"}
               </button>
             </div>
           </form>

@@ -71,7 +71,7 @@ const Sales = () => {
             className="text-[#f9f906] text-4xl font-black leading-tight tracking-[-0.033em] min-w-72"
             style={{ textShadow: GLOW_TEXT }}
           >
-            SALES HISTORY
+            RIWAYAT PENJUALAN
           </h1>
         </header>
 
@@ -84,7 +84,7 @@ const Sales = () => {
                 htmlFor="start-date"
                 className="absolute -top-2.5 left-3 bg-[#0A0A0A] px-1 text-xs text-[#f9f906]/80"
               >
-                Start Date
+                Awal
               </label>
               <input
                 id="start-date"
@@ -103,7 +103,7 @@ const Sales = () => {
                 htmlFor="end-date"
                 className="absolute -top-2.5 left-3 bg-[#0A0A0A] px-1 text-xs text-[#f9f906]/80"
               >
-                End Date
+                Akhir
               </label>
               <input
                 id="end-date"
@@ -126,7 +126,7 @@ const Sales = () => {
             </div>
             <input
               type="text"
-              placeholder="Search by Order ID..."
+              placeholder="Cari dengan ID penjualan..."
               className="bg-black border border-[#f9f906]/50 text-white rounded-lg pl-10 pr-4 py-2 w-full focus:outline-none focus:ring-1 focus:ring-[#f9f906] focus:border-[#f9f906] transition-shadow placeholder-[#f9f906]/50"
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{ boxShadow: GLOW_BORDER_SUBTLE }}
@@ -158,24 +158,24 @@ const Sales = () => {
                   disabled={currentPage === 1 || isLoading}
                   className="px-4 py-2 text-sm font-medium text-black bg-[#f9f906] rounded-md disabled:opacity-50 transition-colors hover:bg-[#f9f906]/80"
                 >
-                  Previous
+                  Kembali
                 </button>
                 <span className="text-white">
-                  Page <strong className="text-[#f9f906]">{currentPage}</strong>{" "}
-                  of <strong className="text-[#f9f906]">{totalPages}</strong>
+                  Hal <strong className="text-[#f9f906]">{currentPage}</strong>{" "}
+                  dari <strong className="text-[#f9f906]">{totalPages}</strong>
                 </span>
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages || isLoading}
                   className="px-4 py-2 text-sm font-medium text-black bg-[#f9f906] rounded-md disabled:opacity-50 transition-colors hover:bg-[#f9f906]/80"
                 >
-                  Next
+                  Lanjut
                 </button>
               </div>
             )}
           </div>
         ) : (
-          <div className="flex flex-col w-full h-80 items-center justify-center">
+          <div className="flex flex-col w-full h-70 items-center justify-center">
             <Loader size="md" />
             <p className="text-white mt-4">
               {error ? "Error Getting Orders" : "Loading Orders..."}

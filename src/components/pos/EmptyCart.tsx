@@ -1,33 +1,4 @@
-// --- Icons ---
-
-const ShoppingBasketIcon = () => (
-  <svg
-    className="text-[#f9f906]"
-    fill="none"
-    height="100%"
-    style={{ filter: "drop-shadow(0 0 10px #f9f906)" }}
-    viewBox="0 0 24 24"
-    width="100%"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M5.14286 10H18.8571L20 22H4L5.14286 10Z"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    />
-    <path
-      d="M7 10L9.42857 2H14.5714L17 10"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    />
-  </svg>
-);
-
-// --- Main Component ---
+import { ShoppingBasketIcon } from "../Icons";
 
 const EmptyCart = () => {
   return (
@@ -53,10 +24,10 @@ const EmptyCart = () => {
                   className="text-[#f9f906] text-xl font-bold leading-tight tracking-wider text-center"
                   style={{ textShadow: "0 0 8px #f9f906" }}
                 >
-                  CART IS EMPTY
+                  KERANJANG KOSONG
                 </p>
                 <p className="text-[#f9f906]/70 text-sm font-normal leading-normal max-w-[480px] text-center">
-                  Select items to start order
+                  Silahkan Pilih Produk
                 </p>
               </div>
             </div>

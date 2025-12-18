@@ -19,7 +19,7 @@ const Login = () => {
       if (user.role === "CASHIER") {
         navigate("/pos", { replace: true });
       } else if (user.role === "ADMIN") {
-        navigate("/admin/dashboard", { replace: true });
+        navigate("/admin", { replace: true });
       }
     }
   }, [user, navigate]);
@@ -72,7 +72,7 @@ const Login = () => {
           {/* Role Selection Grid */}
           <div className="grid grid-cols-2 gap-4 mb-8">
             <RoleCard
-              label="CASHIER"
+              label="KASIR"
               icon={<PointOfSaleIcon className="w-12 h-12" />}
               isActive={activeRole === "CASHIER"}
               onClick={() => setActiveRole("CASHIER")}

@@ -10,6 +10,7 @@ import { createOrder } from "../../services/orderServices";
 import type { NewOrder, OrderItem } from "../../interfaces/orderInterface";
 import { Receipt } from "./Receipt";
 import { apiUrl } from "../../config";
+import { formatCurrency } from "../../helper/formatCurrentcy";
 
 const CartSection = () => {
   const queryClient = useQueryClient();
@@ -79,7 +80,7 @@ const CartSection = () => {
     return (
       <div className="flex flex-col gap-2 w-[35%] h-full bg-[#23230f] items-center justify-center">
         <Loader size="lg" variant="primary" />
-        <h3 className="text-[#f9f906]">Loading Cart...</h3>
+        <h3 className="text-[#f9f906]">Memuat Keranjang...</h3>
       </div>
     );
   }
@@ -87,7 +88,7 @@ const CartSection = () => {
   if (cartError) {
     return (
       <div className="flex flex-col text-[#f9f906] w-[35%] h-full bg-[#23230f] items-center justify-center">
-        Error loading cart.
+        Gangguan Memuat Keranjang.
       </div>
     );
   }
@@ -121,11 +122,11 @@ const CartSection = () => {
                 style={{ backgroundImage: `url("${apiUrl}${item.product.image}")` }}
               ></div>
               <div className="flex flex-col justify-center min-w-0">
-                <p className="text-[#f9f906] text-base font-medium leading-normal truncate">
+                <p className="text-[#f9f906] text-base font-medium leading-normal">
                   {item.product.name}
                 </p>
                 <p className="text-white/70 text-sm font-normal leading-normal">
-                  Rp. {Number(item.product.price).toLocaleString("id-ID")}
+                  {formatCurrency(item.product.price)}
                 </p>
               </div>
             </div>
@@ -135,17 +136,14 @@ const CartSection = () => {
               <QuantitySelector item={item} />
 
               <p className="text-white text-base font-semibold">
-                Rp.{" "}
-                {(Number(item.product.price) * item.quantity).toLocaleString(
-                  "id-ID"
-                )}
+                {formatCurrency((item.product.price) * item.quantity)}
               </p>
             </div>
           </div>
         ))}
         {cart.items.length === 0 && (
           <div className="flex flex-col items-center justify-center h-40 text-[#f9f906]/50">
-            <p>No items in cart</p>
+            <p>Tidak ada product dalam keranjang</p>
           </div>
         )}
       </div>
@@ -155,7 +153,7 @@ const CartSection = () => {
         <div className="flex justify-between items-center">
           <p className="text-[#f9f906] font-bold text-xl">Total</p>
           <p className="text-[#f9f906] font-bold text-xl">
-            Rp. {total.toLocaleString("id-ID")}
+            {formatCurrency(total)}
           </p>
         </div>
         <button
@@ -163,7 +161,7 @@ const CartSection = () => {
           disabled={isPending}
           className="w-full mt-6 bg-[#f9f906] text-black text-xl font-bold py-4 rounded-lg hover:brightness-110 transition-all duration-300 shadow-[0_0_15px_rgba(249,249,6,0.4)] hover:shadow-[0_0_20px_rgba(249,249,6,0.6)]"
         >
-          PROCEED TO PAY
+          Lanjut Ke Pembayaran
         </button>
       </div>
       <PaymentModal

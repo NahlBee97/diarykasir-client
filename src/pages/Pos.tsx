@@ -5,14 +5,9 @@ import LogoutButton from "../components/LogOutButton";
 import { useAuth } from "../hooks/useAuth";
 import ProductSection from "../components/pos/ProductSection";
 
-const categories = ["Ayam Geprek", "Minuman", "Tambahan"];
-
-// --- Components ---
-
 const Pos = () => {
   const { user, logout } = useAuth();
-
-  const [activeCategory, setActiveCategory] = useState(categories[0]);
+  
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -44,7 +39,7 @@ const Pos = () => {
               </div>
               <input
                 className="w-full bg-[#23230f] border border-[#f9f906]/30 rounded-lg py-2 pl-10 pr-4 text-white placeholder:text-[#f9f906]/50 focus:ring-[#f9f906] focus:border-[#f9f906] outline-none transition-shadow duration-300 focus:shadow-[0_0_10px_rgba(249,249,6,0.3)]"
-                placeholder="Search product..."
+                placeholder="Cari produk..."
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -55,38 +50,14 @@ const Pos = () => {
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="pb-3 pt-4 px-6">
-            <div className="flex border-b border-[#f9f906]/20 gap-8">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-2 transition-colors duration-300 ${
-                    activeCategory === category
-                      ? "border-b-[#f9f906] text-[#f9f906]"
-                      : "border-b-transparent text-[#f9f906]/60 hover:text-[#f9f906]"
-                  }`}
-                >
-                  <p className="text-base font-bold leading-normal tracking-[0.015em]">
-                    {category}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* products */}
           <ProductSection
-            activeCategory={activeCategory}
             searchQuery={searchQuery}
           />
         </div>
 
         {/* --- Right Column (Cart) --- */}
         <CartSection />
-
-        
       </div>
     </div>
   );

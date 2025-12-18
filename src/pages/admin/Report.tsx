@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import StatCard from "../../components/admin/StatCard";
-import { DownloadIcon, WarningIcon } from "../../components/Icons";
+import { WarningIcon } from "../../components/Icons";
 import { getTopProducts } from "../../services/productServices"; // Needs updating
 import type { Product } from "../../interfaces/productInterfaces";
 import { formatCurrency } from "../../helper/formatCurrentcy";
@@ -81,7 +81,7 @@ const Report = () => {
             className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
             style={{ textShadow: GLOW_TEXT }}
           >
-            Sales Report
+            LAPORAN PENJUALAN
           </h1>
 
           {/* Filters & Actions */}
@@ -92,7 +92,7 @@ const Report = () => {
                 htmlFor="start-date"
                 className="absolute -top-2.5 left-3 bg-[#0A0A0A] px-1 text-xs text-[#f9f906]/80"
               >
-                Start Date
+                Awal
               </label>
               <input
                 id="start-date"
@@ -110,7 +110,7 @@ const Report = () => {
                 htmlFor="end-date"
                 className="absolute -top-2.5 left-3 bg-[#0A0A0A] px-1 text-xs text-[#f9f906]/80"
               >
-                End Date
+                Akhir
               </label>
               <input
                 id="end-date"
@@ -122,18 +122,18 @@ const Report = () => {
               />
             </div>
 
-            {/* Export Button */}
+            {/* Export Button
             <button className="flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#f9f906] px-5 text-sm font-medium text-black transition-colors hover:bg-yellow-400">
               <DownloadIcon />
               <span>Export Report</span>
-            </button>
+            </button> */}
           </div>
         </div>
 
         {/* Stats Grid - Remains the same, but now uses data filtered by date state */}
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
           <StatCard
-            title="TOTAL REVENUE"
+            title="TOTAL OMSET"
             // Ensure you are handling the integer-as-cents to dollar conversion here if your backend returns cents!
             value={orderSummary?.totalRevenue}
             isCurrency
@@ -141,20 +141,20 @@ const Report = () => {
             isError={!!summaryError}
           />
           <StatCard
-            title="TOTAL SALES"
-            value={orderSummary.totalSales}
-            isLoading={isSummaryLoading}
-            isError={!!summaryError}
-          />
-          <StatCard
-            title="AVG. SALE VALUE"
+            title="NILAI PENJUALAN RATA - RATA"
             value={orderSummary.averageSaleValue}
             isCurrency
             isLoading={isSummaryLoading}
             isError={!!summaryError}
           />
           <StatCard
-            title="ITEMS SOLD"
+            title="TOTAL ORDER"
+            value={orderSummary.totalSales}
+            isLoading={isSummaryLoading}
+            isError={!!summaryError}
+          />
+          <StatCard
+            title="ITEM TERJUAL"
             value={orderSummary.itemsSold}
             isLoading={isSummaryLoading}
             isError={!!summaryError}
@@ -167,7 +167,7 @@ const Report = () => {
             className="text-[#f9f906] text-[22px] font-bold leading-tight tracking-[-0.015em]"
             style={{ textShadow: GLOW_TEXT }}
           >
-            Top Selling Products
+            PRODUK TERLARIS
           </h2>
           <div
             className="mt-4 overflow-hidden rounded-xl border border-[#f9f906]/50 bg-[#0A0A0A]"
@@ -179,13 +179,16 @@ const Report = () => {
                   {!isTopProductsLoading && !topProductsError && (
                     <tr>
                       <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
-                        Product Name
+                        # ID
+                      </th>
+                      <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70">
+                        Nama
                       </th>
                       <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70 text-right">
-                        Units Sold
+                        Jumlah Terjual
                       </th>
                       <th className="p-4 text-sm font-semibold uppercase text-[#f9f906]/70 text-right">
-                        Total Revenue
+                        Total Omset
                       </th>
                     </tr>
                   )}
@@ -215,6 +218,9 @@ const Report = () => {
                           key={product.id}
                           className="border-b border-[#f9f906]/10 last:border-none hover:bg-white/5 transition-colors"
                         >
+                          <td className="p-4 text-sm text-white/90">
+                            {product.id}
+                          </td>
                           <td className="p-4 text-sm text-white/90">
                             {product.name}
                           </td>
