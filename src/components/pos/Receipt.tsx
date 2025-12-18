@@ -1,10 +1,12 @@
 import { forwardRef } from "react";
-import type { OrderItem } from "../../interfaces/authInterfaces";
 import { formatCurrency } from "../../helper/formatCurrentcy";
+import type { Order, OrderItem } from "../../interfaces/orderInterface";
 
 interface ReceiptProps {
-  // eslint-disable-next-line
-  data: any;
+  data: {
+    order: Order;
+    orderItems: OrderItem[];
+  };
 }
 
 export const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
@@ -40,9 +42,9 @@ export const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
           {data.orderItems.map((item: OrderItem) => (
             <div className="flex justify-between mb-1">
               <span>
-                "{item.product.name} x {item.quantity}"
+                "{item.product?.name} x {item.quantity}"
               </span>
-              <span>{formatCurrency(item.product.price * item.quantity)}</span>
+              <span>{formatCurrency(item.product?.price as number * item.quantity)}</span>
             </div>
           ))}
         </div>

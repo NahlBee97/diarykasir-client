@@ -1,5 +1,9 @@
 import { useFormik } from "formik";
-import { ExpandMoreIcon, PhotoCameraIcon } from "../../components/Icons";
+import {
+  ExpandMoreIcon,
+  PhotoCameraIcon,
+  WarningIcon,
+} from "../../components/Icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { editProductSchema, productSchema } from "../../schemas/productSchema";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -14,6 +18,7 @@ import type {
 } from "../../interfaces/productInterfaces";
 import { useState, useEffect } from "react"; // Added useEffect
 import { apiUrl } from "../../config";
+import Loader from "../../components/Loader";
 
 // ... (Your GLOW_SHADOW and categories constants remain the same) ...
 const GLOW_SHADOW_CONTAINER = "0 0 30px rgba(249,249,6,0.3)";
@@ -151,176 +156,187 @@ const AddEditProduct = () => {
           </div>
 
           {/* Form Grid */}
-          <form onSubmit={formik.handleSubmit}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Left Column (Inputs) - NO CHANGES HERE */}
-              {/* ... (Your left column inputs for name, price, stock, category) ... */}
-              <div className="md:col-span-2 flex flex-col gap-6">
-                {/* Product Name */}
-                <label className="flex flex-col w-full">
-                  <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                    Nama
-                  </p>
-                  <input
-                    name="name"
-                    className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
-                    style={{ boxShadow: GLOW_SHADOW_INPUT }}
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  {formik.touched.name && formik.errors.name && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.name}
-                    </p>
-                  )}
-                </label>
-
-                {/* Price & Stock Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {isProductLoading || !!productError ? (
+            <div className="flex flex-col gap-3 justify-center items-center">
+              {productError ? <WarningIcon /> : <Loader size="md" />}
+              <p className="text-white">
+                {productError
+                  ? "Error Loading Products"
+                  : "Loading Products..."}
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={formik.handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Left Column (Inputs) - NO CHANGES HERE */}
+                {/* ... (Your left column inputs for name, price, stock, category) ... */}
+                <div className="md:col-span-2 flex flex-col gap-6">
+                  {/* Product Name */}
                   <label className="flex flex-col w-full">
                     <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      Harga
+                      Nama
                     </p>
                     <input
-                      name="price"
-                      type="number"
+                      name="name"
                       className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
                       style={{ boxShadow: GLOW_SHADOW_INPUT }}
-                      value={formik.values.price}
+                      value={formik.values.name}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
-                    {formik.touched.price && formik.errors.price && (
+                    {formik.touched.name && formik.errors.name && (
                       <p className="text-red-500 text-sm mt-1">
-                        {formik.errors.price}
+                        {formik.errors.name}
                       </p>
                     )}
                   </label>
+
+                  {/* Price & Stock Row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <label className="flex flex-col w-full">
+                      <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                        Harga
+                      </p>
+                      <input
+                        name="price"
+                        type="number"
+                        className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
+                        style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                        value={formik.values.price}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                      />
+                      {formik.touched.price && formik.errors.price && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {formik.errors.price}
+                        </p>
+                      )}
+                    </label>
+                    <label className="flex flex-col w-full">
+                      <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
+                        Stok
+                      </p>
+                      <input
+                        name="stock"
+                        type="number"
+                        className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
+                        style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                        value={formik.values.stock}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                      />
+                      {formik.touched.stock && formik.errors.stock && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {formik.errors.stock}
+                        </p>
+                      )}
+                    </label>
+                  </div>
+
+                  {/* Category Select */}
                   <label className="flex flex-col w-full">
                     <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      Stok
+                      Kategori
                     </p>
-                    <input
-                      name="stock"
-                      type="number"
-                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
-                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
-                      value={formik.values.stock}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    />
-                    {formik.touched.stock && formik.errors.stock && (
+                    <div className="relative">
+                      <select
+                        name="category"
+                        className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 px-[15px] text-base font-normal leading-normal appearance-none cursor-pointer"
+                        style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                        value={formik.values.category}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                      >
+                        {categories.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#f9f906]">
+                        <ExpandMoreIcon />
+                      </div>
+                    </div>
+                    {formik.touched.category && formik.errors.category && (
                       <p className="text-red-500 text-sm mt-1">
-                        {formik.errors.stock}
+                        {formik.errors.category}
                       </p>
                     )}
                   </label>
                 </div>
 
-                {/* Category Select */}
-                <label className="flex flex-col w-full">
+                {/* Right Column (Image Upload) - ⭐️ CHANGES HERE */}
+                <div className="md:col-span-1 flex flex-col">
                   <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                    Kategori
+                    Gambar
                   </p>
-                  <div className="relative">
-                    <select
-                      name="category"
-                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 px-[15px] text-base font-normal leading-normal appearance-none cursor-pointer"
-                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
-                      value={formik.values.category}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    >
-                      {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#f9f906]">
-                      <ExpandMoreIcon />
-                    </div>
-                  </div>
-                  {formik.touched.category && formik.errors.category && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {formik.errors.category}
-                    </p>
-                  )}
-                </label>
-              </div>
-
-              {/* Right Column (Image Upload) - ⭐️ CHANGES HERE */}
-              <div className="md:col-span-1 flex flex-col">
-                <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                  Gambar
-                </p>
-                {/* Wrap the clickable area with a label to connect it to the hidden input */}
-                <label
-                  htmlFor="file-upload" // Connects to the input below
-                  className="relative group flex aspect-square w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#f9f906]/50 hover:border-[#f9f906] transition-colors bg-[#000000] overflow-hidden"
-                  style={{ boxShadow: GLOW_SHADOW_INPUT }}
-                >
-                  {/* Image Preview */}
-                  {/* ⭐️ Use finalPreviewUrl for the background image */}
-                  <img
-                    src={finalPreviewUrl}
-                    className="absolute w-full h-full inset-0 bg-cover bg-center group-hover:opacity-20 transition-opacity"
-                  />
-                  <div
-                    className={`relative flex flex-col items-center justify-center text-center p-4 ${
-                      finalPreviewUrl ? "opacity-20" : "opacity-60"
-                    } group-hover:opacity-100 transition-opacity`}
+                  {/* Wrap the clickable area with a label to connect it to the hidden input */}
+                  <label
+                    htmlFor="file-upload" // Connects to the input below
+                    className="relative group flex aspect-square w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-[#f9f906]/50 hover:border-[#f9f906] transition-colors bg-[#000000] overflow-hidden"
+                    style={{ boxShadow: GLOW_SHADOW_INPUT }}
                   >
-                    <div className="text-[#f9f906] ">
-                      <PhotoCameraIcon />
-                    </div>
-                    <p className="mt-2 text-sm font-semibold text-[#f9f906]">
-                      {mode === "add" && !finalPreviewUrl
-                        ? "Tambah"
-                        : "Ganti"}{" "}
-                      Gambar
-                    </p>
-                    <p className="text-xs text-[#f9f906]">PNG, JPG, GIF</p>
-                    <input
-                      id="file-upload"
-                      name="file-upload"
-                      type="file"
-                      className="sr-only"
-                      onChange={handleFileChange} // Existing handler is correct
-                      accept="image/*"
+                    {/* Image Preview */}
+                    {/* ⭐️ Use finalPreviewUrl for the background image */}
+                    <img
+                      src={finalPreviewUrl}
+                      className="absolute w-full h-full inset-0 bg-cover bg-center group-hover:opacity-20 transition-opacity"
                     />
-                  </div>
-                </label>
+                    <div
+                      className={`relative flex flex-col items-center justify-center text-center p-4 ${
+                        finalPreviewUrl ? "opacity-20" : "opacity-60"
+                      } group-hover:opacity-100 transition-opacity`}
+                    >
+                      <div className="text-[#f9f906] ">
+                        <PhotoCameraIcon />
+                      </div>
+                      <p className="mt-2 text-sm font-semibold text-[#f9f906]">
+                        {mode === "add" && !finalPreviewUrl
+                          ? "Tambah"
+                          : "Ganti"}{" "}
+                        Gambar
+                      </p>
+                      <p className="text-xs text-[#f9f906]">PNG, JPG, GIF</p>
+                      <input
+                        id="file-upload"
+                        name="file-upload"
+                        type="file"
+                        className="sr-only"
+                        onChange={handleFileChange} // Existing handler is correct
+                        accept="image/*"
+                      />
+                    </div>
+                  </label>
+                </div>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            {/* ... (Your action buttons remain the same) ... */}
-            <div className="mt-10 flex flex-wrap justify-end gap-4">
-              <button
-                type="button"
-                className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#0A0A0A] px-6 py-2 text-base font-bold text-[#f9f906] ring-2 ring-[#f9f906] transition-all hover:bg-[#f9f906]/10"
-                onClick={() => navigate("/admin/products")}
-                disabled={addPending || editPending}
-              >
-                BATAL
-              </button>
-              <button
-                type="submit"
-                // The form is ready to submit if either file is present (add) or form has changes (edit)
-                disabled={
-                  formik.isSubmitting ||
-                  addPending ||
-                  editPending ||
-                  (mode === "add" && !file)
-                }
-                className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#f9f906] px-6 py-2 text-base font-bold text-[#0A0A0A] transition-all hover:brightness-110 shadow-[0_0_15px_rgba(249,249,6,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {formik.isSubmitting ? "MENYIMPAN..." : "SIMPAN"}
-              </button>
-            </div>
-          </form>
+              {/* Action Buttons */}
+              {/* ... (Your action buttons remain the same) ... */}
+              <div className="mt-10 flex flex-wrap justify-end gap-4">
+                <button
+                  type="button"
+                  className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#0A0A0A] px-6 py-2 text-base font-bold text-[#f9f906] ring-2 ring-[#f9f906] transition-all hover:bg-[#f9f906]/10"
+                  onClick={() => navigate("/admin/products")}
+                  disabled={addPending || editPending}
+                >
+                  BATAL
+                </button>
+                <button
+                  type="submit"
+                  // The form is ready to submit if either file is present (add) or form has changes (edit)
+                  disabled={
+                    formik.isSubmitting ||
+                    addPending ||
+                    editPending ||
+                    (mode === "add" && !file)
+                  }
+                  className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#f9f906] px-6 py-2 text-base font-bold text-[#0A0A0A] transition-all hover:brightness-110 shadow-[0_0_15px_rgba(249,249,6,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {formik.isSubmitting ? "MENYIMPAN..." : "SIMPAN"}
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </main>
