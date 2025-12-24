@@ -17,7 +17,6 @@ import type {
   UpdateProduct,
 } from "../../interfaces/productInterfaces";
 import { useState, useEffect } from "react"; // Added useEffect
-import { apiUrl } from "../../config";
 import Loader from "../../components/Loader";
 
 // ... (Your GLOW_SHADOW and categories constants remain the same) ...
@@ -52,7 +51,7 @@ const AddEditProduct = () => {
   useEffect(() => {
     if (mode === "edit" && product?.image && !previewUrl) {
       // eslint-disable-next-line
-      setPreviewUrl(apiUrl + product.image);
+      setPreviewUrl(product.image);
     }
   }, [mode, product?.image, previewUrl]);
 
