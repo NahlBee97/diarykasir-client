@@ -7,8 +7,6 @@ import {
   WarningIcon,
 } from "../../components/Icons";
 
-import { GLOW_BORDER, GLOW_TEXT } from "./Dashboard";
-// Make sure to update your productServices file
 import Loader from "../../components/Loader";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -45,38 +43,48 @@ const Users = () => {
 
   const filteredItems: User[] = useMemo(() => {
     return users.length > 0 && searchQuery
-      ? users.filter(
-          (user: User) =>
-            user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ? users.filter((user: User) =>
+          user.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       : users;
   }, [searchQuery, users]);
 
   return (
-    <main className="flex flex-1 flex-col p-6 lg:p-10">
-      {/* Header and Search remain the same */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <h1
-          className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
-          style={{ textShadow: GLOW_TEXT }}
-        >
-          LIST PETUGAS KASIR
+    // Main Container: White bg, Black text
+    <main className="flex flex-1 flex-col bg-white text-black min-h-full p-6 lg:p-10">
+      {/* Header Section */}
+      <div className="flex flex-col items-start justify-between gap-6 mb-8 border-b-2 border-black pb-8">
+        <h1 className="text-4xl sm:text-5xl font-black leading-tight tracking-tighter uppercase">
+          List Petugas Kasir
         </h1>
-        <div className="flex items-center gap-4">
-          <div className="relative w-full max-w-sm">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[#f9f906]/70">
+
+        <div className="flex items-center justify-between gap-4 w-full">
+          {/* Search Bar - Pill Shape */}
+          <div className="relative w-full md:w-80">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-black/50">
               <SearchIcon />
             </div>
             <input
-              className="w-full bg-[#23230f] border border-[#f9f906]/30 rounded-lg py-2 pl-10 pr-4 text-white placeholder:text-[#f9f906]/50 focus:ring-[#f9f906] focus:border-[#f9f906] outline-none transition-shadow duration-300 focus:shadow-[0_0_10px_rgba(249,249,6,0.3)]"
+              className="w-full bg-white border-2 border-black rounded-full py-2.5 pl-11 pr-5 text-black placeholder:text-black/40 text-sm font-bold focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transition-all duration-200"
               placeholder="Cari Petugas..."
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
+
+          {/* Add Button - Pill Shape & Inverted Hover */}
           <button
-            className="flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#f9f906] px-4 py-2 text-sm font-bold text-black hover:bg-yellow-400 transition-colors"
+            className="
+              flex items-center justify-center gap-2 whitespace-nowrap 
+              rounded-full bg-black px-6 py-2.5 
+              text-sm font-black text-white uppercase tracking-wider
+              border-2 border-black
+              shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]
+              hover:shadow-none hover:translate-y-0.5
+              active:scale-95
+              transition-all duration-200
+            "
             onClick={() => navigate("/admin/users/add")}
           >
             <AddIcon />
@@ -85,52 +93,56 @@ const Users = () => {
         </div>
       </div>
 
-      {/* Table Container */}
-      <div
-        className="overflow-hidden rounded-xl border border-[#f9f906]/50 bg-[#0A0A0A] flex-1 flex flex-col"
-        style={{ boxShadow: GLOW_BORDER }}
-      >
+      {/* Table Container - Neo Brutalist styling */}
+      <div className="overflow-hidden rounded-xl border-2 border-black bg-white flex-1 flex flex-col shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
         <div className="overflow-x-auto flex-1">
-          <table className="w-full text-left">
-            <thead className="border-b border-[#f9f906]/20">
-              {/* Table Headers remain the same */}
+          <table className="w-full text-left border-collapse">
+            {/* Header: Solid Black for High Contrast */}
+            <thead className="bg-black text-white">
               {!usersError && !isUsersLoading && (
                 <tr>
-                  <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70">
+                  <th className="py-4 px-4 text-xs font-black uppercase tracking-widest">
                     # ID
                   </th>
-                  <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70">
+                  <th className="py-4 px-4 text-xs font-black uppercase tracking-widest">
                     Nama
                   </th>
-                  <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70 text-center">
+                  <th className="py-4 px-4 text-xs font-black uppercase tracking-widest text-center">
                     Shift
                   </th>
-                  <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70 text-center">
+                  <th className="py-4 px-4 text-xs font-black uppercase tracking-widest text-center">
                     Tindakan
                   </th>
                 </tr>
               )}
             </thead>
-            <tbody>
+
+            {/* Body */}
+            <tbody className="bg-white text-black">
               {isUsersLoading || usersError ? (
-                // Loading/Error state inside the table body
+                // Loading/Error state
                 <tr>
-                  <td colSpan={8} className="p-10 text-center">
-                    <div className="flex flex-col h-80 gap-3 justify-center items-center">
-                      {usersError ? <WarningIcon /> : <Loader size="md" />}
-                      <p className="text-white">
+                  <td colSpan={4} className="p-10 text-center">
+                    <div className="flex flex-col h-80 gap-4 justify-center items-center">
+                      {usersError ? (
+                        <WarningIcon  />
+                      ) : (
+                        <Loader size="md" variant="dark" />
+                      )}
+                      <p className="text-black font-bold uppercase tracking-wider">
                         {usersError
-                          ? "Error Loading Users"
-                          : "Loading Users..."}
+                          ? "Gagal Memuat Data User"
+                          : "Memuat Data User..."}
                       </p>
                     </div>
                   </td>
                 </tr>
               ) : filteredItems.length === 0 ? (
+                // Empty state
                 <tr>
                   <td
-                    colSpan={8}
-                    className="p-10 text-center text-[#f9f906]/70"
+                    colSpan={4}
+                    className="p-10 text-center text-black font-bold uppercase tracking-widest text-lg"
                   >
                     Kasir tidak ditemukan
                   </td>
@@ -140,33 +152,49 @@ const Users = () => {
                   {filteredItems.map((user: User) => (
                     <tr
                       key={user.id}
-                      className="border-b border-[#f9f906]/10 last:border-none hover:bg-white/5 transition-colors"
+                      className="border-b border-black/10 last:border-none hover:bg-gray-50 transition-colors"
                     >
-                      {/* Table Cells remain the same */}
-                      <td className="p-4 text-sm text-white/70">{user.id}</td>
-                      <td className="p-4 text-sm text-white/90">{user.name}</td>
-                      <td className="p-4 text-sm text-white/70 text-center">
+                      <td className="p-4 text-sm font-medium text-black/60">
+                        #{user.id}
+                      </td>
+                      <td className="p-4 text-sm font-bold uppercase text-black">
+                        {user.name}
+                      </td>
+                      <td className="p-4 text-sm font-bold text-center uppercase text-black">
                         {user.shift === "DAY" ? "Siang" : "Malam"}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-center gap-2">
+                          {/* Edit Button */}
                           <button
-                            className="text-[#f9f906] hover:text-[#f9f906]/70 transition-all duration-200"
-                            style={{ textShadow: GLOW_TEXT }}
+                            className="
+                                flex items-center justify-center h-8 w-8 rounded-full 
+                                border border-black text-black 
+                                hover:bg-black hover:text-white 
+                                transition-all duration-200
+                            "
                             disabled={deletePending}
                             onClick={() =>
                               navigate(`/admin/users/edit/${user.id}`)
                             }
+                            title="Edit"
                           >
-                            <EditIcon />
+                            <EditIcon  />
                           </button>
+
+                          {/* Delete Button */}
                           <button
-                            className="text-[#f9f906] hover:text-[#f9f906]/70 transition-all duration-200"
-                            style={{ textShadow: GLOW_TEXT }}
+                            className="
+                                flex items-center justify-center h-8 w-8 rounded-full 
+                                border border-black text-black 
+                                hover:bg-black hover:text-white 
+                                transition-all duration-200
+                            "
                             disabled={deletePending}
                             onClick={() => deleteItem(user.id)}
+                            title="Hapus"
                           >
-                            <DeleteIcon />
+                            <DeleteIcon  />
                           </button>
                         </div>
                       </td>

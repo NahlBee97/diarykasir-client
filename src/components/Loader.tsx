@@ -1,12 +1,15 @@
+import React from "react";
+
 // Define the shape of the props
 interface LoaderProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg" | "xl";
-  variant?: "primary" | "secondary" | "white";
+  // Updated variants to reflect the B&W theme
+  variant?: "dark" | "secondary" | "white";
 }
 
 const Loader: React.FC<LoaderProps> = ({
   size = "md",
-  variant = "primary",
+  variant = "dark", // Default to dark for the white background
   className = "",
   ...props
 }) => {
@@ -15,13 +18,14 @@ const Loader: React.FC<LoaderProps> = ({
     sm: "w-4 h-4 border-2",
     md: "w-8 h-8 border-4",
     lg: "w-12 h-12 border-4",
-    xl: "w-16 h-16 border-8",
+    xl: "w-16 h-16 border-[6px]", // Slightly thinner for a cleaner B&W look
   };
 
-  // Map variants to color classes
+  // Map variants to black/white color classes
   const colorClasses = {
-    primary: "border-[#f9f906] border-t-transparent",
-    secondary: "border-gray-500 border-t-transparent",
+    // Primary/Yellow replaced with high-contrast Black
+    dark: "border-black border-t-transparent",
+    secondary: "border-gray-400 border-t-transparent",
     white: "border-white border-t-transparent",
   };
 

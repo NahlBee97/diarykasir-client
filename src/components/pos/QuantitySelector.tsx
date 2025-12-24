@@ -49,7 +49,6 @@ const QuantitySelector = ({ item }: QuantitySelectorProps) => {
     if (debouncedQty === item.quantity) return;
 
     const timer = setTimeout(() => {
-      console.log("Updating item quantity");
       updateItem({ itemId: item.id, quantity: debouncedQty });
     }, 1000); // 1000ms (1s)
 
@@ -65,22 +64,36 @@ const QuantitySelector = ({ item }: QuantitySelectorProps) => {
     }
   };
 
+  // Shared button class for consistency
+  const buttonClass = `
+    group flex h-7 w-7 items-center justify-center rounded-full 
+    border border-black bg-white text-black 
+    transition-all duration-200 
+    hover:bg-black hover:text-white 
+    active:scale-90
+    disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-black
+  `;
+
   return (
-    <div className="flex items-center gap-2 text-white">
+    <div className="flex items-center gap-3">
       <button
         onClick={handleClickMinus}
         disabled={isPending || isDeleting}
-        className="text-lg font-bold flex h-7 w-7 items-center justify-center rounded-full bg-[#11110A] hover:bg-[#f9f906] hover:text-black transition-colors duration-200 disabled:cursor-not-allowed"
+        className={buttonClass}
+        aria-label="Decrease quantity"
       >
         <MinusIcon />
       </button>
-      <span className="text-base font-medium w-5 text-center text-[#f9f906]">
+
+      <span className="min-w-5 text-center text-base font-black text-black">
         {debouncedQty}
       </span>
+
       <button
         onClick={() => setDebouncedQty((prev) => prev + 1)}
         disabled={isPending}
-        className="text-lg font-bold flex h-7 w-7 items-center justify-center rounded-full bg-[#11110A] hover:bg-[#f9f906] hover:text-black transition-colors duration-200 disabled:cursor-not-allowed"
+        className={buttonClass}
+        aria-label="Increase quantity"
       >
         <PlusIcon />
       </button>

@@ -9,8 +9,7 @@ import { getAllUsers } from "../../services/userServices";
 import { useState } from "react";
 import type { User } from "../../interfaces/authInterfaces";
 
-export const GLOW_BORDER = "0 0 1px #f9f906, 0 0 4px #f9f906, 0 0 8px #f9f906";
-export const GLOW_TEXT = "0 0 2px #f9f906, 0 0 5px #f9f906";
+// Removed GLOW constants as they are no longer needed
 
 const Dashboard = () => {
   const [selectedUserId, setSelectedUserId] = useState<number | undefined>(
@@ -43,9 +42,9 @@ const Dashboard = () => {
 
   const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
-    // Logika: Jika value kosong, set undefined (tampilkan semua), jika ada angka set Number
     setSelectedUserId(val ? Number(val) : undefined);
   };
+
   // order summaries
   const todayTotal = todayOrders.reduce(
     (acc: number, order: Order) => acc + order.totalAmount,
@@ -58,73 +57,92 @@ const Dashboard = () => {
   );
 
   return (
-    <main className="flex flex-1 flex-col">
+    // Main Container: White bg, Black text
+    <main className="flex flex-1 flex-col bg-white text-black min-h-full">
       <div className="flex-1 p-6 lg:p-10">
-        {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1
-            className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
-            style={{ textShadow: GLOW_TEXT }}
-          >
-            PENJUALAN HARI INI
+        {/* Header Section */}
+        <div className="flex flex-wrap items-end justify-between gap-6 border-b-2 border-black pb-8">
+          <h1 className="text-black text-4xl sm:text-5xl font-black leading-tight tracking-tighter uppercase">
+            Penjualan Hari Ini
           </h1>
 
           {/* Cashier Selection */}
-          <div className="flex flex-col justify-center items-center gap-2 mb-2">
-            <select
-              id="cashier-select"
-              className="mb-4 p-2 border border-black rounded w-full"
-              onChange={handleUserChange}
-            >
-              <option value="">
-                {isLoadingUsers
-                  ? "Memuat data kasir..."
-                  : "Pilih Petugas Kasir"}
-              </option>
-              {users.map((user: User) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
+          <div className="flex flex-col gap-1 w-full sm:w-auto min-w-60">
+            <div className="relative">
+              <select
+                id="cashier-select"
+                className="w-full appearance-none cursor-pointer rounded-lg border-2 border-black bg-white py-3 pl-4 pr-10 font-bold text-black focus:outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
+                onChange={handleUserChange}
+              >
+                <option value="">
+                  {isLoadingUsers ? "Memuat..." : "SEMUA PETUGAS"}
                 </option>
-              ))}
-            </select>
+                {users.map((user: User) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+              {/* Custom Chevron Icon for B&W Theme */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-black">
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-6">
+          <div className="col-span-2">
+
           <StatsCard
             title="OMSET HARI INI"
             value={formatCurrency(todayTotal)}
             isLoading={isOrderLoading}
             isError={!!orderError}
           />
-          <StatsCard
-            title="JUMLAH TRAKSAKSI"
-            value={todayOrders.length}
-            isLoading={isOrderLoading}
-            isError={!!orderError}
-          />
-          <StatsCard
-            title="TOTAL ITEM TERJUAL"
-            value={totalItemsSold}
-            isLoading={isOrderLoading}
-            isError={!!orderError}
-          />
+          </div>
+            <StatsCard
+              title="JUMLAH TRANSAKSI"
+              value={todayOrders.length}
+              isLoading={isOrderLoading}
+              isError={!!orderError}
+            />
+            <StatsCard
+              title="TOTAL ITEM TERJUAL"
+              value={totalItemsSold}
+              isLoading={isOrderLoading}
+              isError={!!orderError}
+            />
         </div>
 
         {/* Low Stock Alerts */}
-        <div className="mt-10">
-          <h2
-            className="text-[#f9f906] text-[22px] font-bold leading-tight tracking-[-0.015em]"
-            style={{ textShadow: GLOW_TEXT }}
-          >
-            PRODUK STOK RENDAH
+        <div className="mt-12">
+          <h2 className="mb-6 flex items-center gap-3 text-2xl font-black uppercase tracking-tight text-black">
+            <span className="h-3 w-3 rounded-full bg-black"></span>
+            Produk Stok Rendah
           </h2>
-          <LowStockTable
-            products={products}
-            isLoading={isProductsLoading}
-            isError={!!productsError}
-          />
+
+          {/* Table Container with B&W styling */}
+          <div className="overflow-hidden rounded-xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <LowStockTable
+              products={products}
+              isLoading={isProductsLoading}
+              isError={!!productsError}
+            />
+          </div>
         </div>
       </div>
     </main>

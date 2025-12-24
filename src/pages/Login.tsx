@@ -72,7 +72,6 @@ const Login = () => {
     setSelectedUserId(selectedUserId);
   };
 
-  // Keyboard support
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key >= "0" && e.key <= "9") {
@@ -85,15 +84,24 @@ const Login = () => {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line
+    //eslint-disable-next-line
   }, [pin]);
 
   return (
-    <div className="layout-container flex h-full grow flex-col">
+    <div className="layout-container flex h-full grow flex-col bg-white text-black">
       <div className="flex flex-1 justify-center items-center py-10 px-4 sm:px-6 lg:px-8">
         <div className="layout-content-container flex flex-col max-w-sm w-full mx-auto">
+          {/* Logo Section */}
+          <div className="flex justify-center mb-6">
+            <img
+              src="/diarylogo.jpeg" // Update this path to your logo file
+              alt="Logo"
+              className="h-24 w-auto object-contain rounded-xl"
+            />
+          </div>
+
           {/* Headline */}
-          <h1 className="tracking-light text-[32px] font-bold leading-tight text-center mb-8">
+          <h1 className="tracking-tight text-[32px] font-black leading-tight text-center mb-8 uppercase">
             DIARY KASIR
           </h1>
 
@@ -101,10 +109,10 @@ const Login = () => {
           <div className="flex flex-col justify-center items-center gap-2 mb-2">
             <select
               id="cashier-select"
-              className="mb-4 p-2 border border-black rounded w-full"
+              className="mb-4 p-3 border-2 border-black rounded-lg w-full bg-white text-black font-medium focus:outline-none"
               onChange={handleUserChange}
             >
-              <option value="">
+              <option value="" className="text-black">
                 {isLoadingUsers
                   ? "Memuat data kasir..."
                   : "Pilih Petugas Kasir"}
@@ -117,13 +125,13 @@ const Login = () => {
             </select>
           </div>
 
-          {/* Role Selection Grid */}
-          <h3 className="text-center text-lg font-medium">
-            Silahkan Masukkan PIN
+          {/* Prompt */}
+          <h3 className="text-center text-lg font-bold uppercase tracking-wide">
+            Masukkan PIN
           </h3>
 
           {/* PIN Input Display */}
-          <div className="flex justify-center p-4">
+          <div className="flex justify-center p-6">
             <div className="relative flex gap-4">
               {[...Array(6)].map((_, i) => (
                 <PinDot key={i} filled={i < pin.length} />
@@ -132,7 +140,7 @@ const Login = () => {
           </div>
 
           {/* Numeric Keypad */}
-          <div className="grid grid-cols-3 gap-2 px-4 py-3">
+          <div className="grid grid-cols-3 gap-3 px-4 py-3">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
               <KeypadButton
                 key={num}
@@ -141,11 +149,10 @@ const Login = () => {
                 {num}
               </KeypadButton>
             ))}
-            {/* Empty placeholder to align 0 and backspace */}
             <div className="flex items-center justify-center p-4 h-16 rounded-lg"></div>
             <KeypadButton onClick={() => handleNumClick("0")}>0</KeypadButton>
             <KeypadButton onClick={handleBackspace}>
-              <BackspaceIcon className="w-8 h-8" />
+              <BackspaceIcon className="w-8 h-8 text-black" />
             </KeypadButton>
           </div>
 
@@ -153,7 +160,7 @@ const Login = () => {
           <div className="flex p-4 justify-center">
             <button
               onClick={() => mutate(pin)}
-              className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-black text-white text-lg font-bold leading-normal tracking-wider hover:brightness-110 hover:shadow-[0_0_15px_rgba(249,249,6,0.5)] transition-all duration-300"
+              className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-black text-white text-lg font-black leading-normal tracking-widest hover:bg-gray-800 transition-all duration-200 border-2 border-black"
             >
               <span className="truncate">LOGIN</span>
             </button>

@@ -15,7 +15,7 @@ import CartItemCard from "./CartItemCard";
 
 const CartSection = () => {
   const queryClient = useQueryClient();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [receiptData, setReceiptData] = useState<{
     // eslint-disable-next-line
@@ -24,9 +24,7 @@ const CartSection = () => {
   }>({ order: {}, orderItems: [] });
 
   useEffect(() => {
-    // Check if receiptData has valid order info inside it
     if (receiptData && receiptData.order && receiptData.order.id) {
-      // Small timeout ensures React has finished rendering the <Receipt> DOM
       setTimeout(() => {
         window.print();
       }, 100);
@@ -83,9 +81,9 @@ const CartSection = () => {
 
   if (isCartLoading || cartError) {
     return (
-      <div className="flex flex-col gap-2 w-full h-full items-center justify-center">
-        {cartError ? <WarningIcon /> : <Loader size="lg" variant="primary" />}
-        <h3 className="text-[#f9f906]">
+      <div className="flex flex-col gap-2 w-full h-full items-center justify-center bg-white">
+        {cartError ? <WarningIcon /> : <Loader size="lg" variant="dark" />}
+        <h3 className="text-black font-bold uppercase">
           {cartError ? "Gangguan Memuat Keranjang..." : "Memuat Keranjang..."}
         </h3>
       </div>
@@ -93,63 +91,66 @@ const CartSection = () => {
   }
 
   if (cart.items.length === 0) {
-    return (
-      <div className="flex flex-col w-[35%] h-full items-center justify-center">
-        <EmptyCart />
-      </div>
-    );
+    return <EmptyCart />;
   }
 
   return (
-    <div className="flex flex-col w-[35%] h-full bg-[#23230f]">
-      <h2
-        className="text-[#f9f906] text-[22px] font-bold leading-tight tracking-[-0.015em] px-6 pb-4 pt-6"
-        style={{ textShadow: "0 0 10px rgba(249, 249, 6, 0.3)" }}
-      >
-        DETAIL PESANAN
+    // 1. Added 'overflow-hidden' to Parent to contain the scroll area strictly
+    <div className="flex flex-col w-full h-screen bg-white overflow-hidden">
+      {/* Header (Fixed) */}
+      <h2 className="shrink-0 text-black h-20 p-6 text-lg font-black leading-tight tracking-tight uppercase border-b border-black">
+        Detail Pesanan
       </h2>
 
-      <div className="flex-1 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-[#f9f906]/20 scrollbar-track-transparent">
+      {/* 2. Scrollable Area Logic:
+         - flex-1: Takes up all remaining space between Header and Footer.
+         - min-h-0: CRITICAL. Forces flex child to shrink below its content size, enabling scroll.
+         - overflow-y-auto: Shows scrollbar when content overflows.
+      */}
+      <div className="flex-1 min-h-0 px-2 overflow-y-auto scrollbar-thin scrollbar-thumb-black/30 scrollbar-track-transparent hover:scrollbar-thumb-black/50">
         {cart.items.map((item: CartItem) => (
           <div
             key={item.id}
-            className="flex items-center gap-4 px-4 py-3 justify-between hover:bg-black/20 rounded-lg transition-colors"
+            className="flex items-center gap-4 px-4 py-4 justify-between border-b border-black/10 hover:bg-black/5 transition-colors"
           >
             <CartItemCard item={item} />
 
-            <div className="shrink-0 flex flex-col items-end gap-1">
-              {/* Quantity selector */}
+            <div className="shrink-0 flex flex-col items-end gap-2">
               <QuantitySelector item={item} />
-
-              <p className="text-white text-base font-semibold">
+              <p className="text-black text-base font-black">
                 {formatCurrency(item.product.price * item.quantity)}
               </p>
             </div>
           </div>
         ))}
-        {cart.items.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-40 text-[#f9f906]/50">
-            <p>Tidak ada product dalam keranjang</p>
-          </div>
-        )}
       </div>
 
-      {/* Footer Section */}
-      <div className="p-6 border-t border-t-[#f9f906]/20 mt-auto bg-[#23230f]">
-        <div className="flex justify-between items-center">
-          <p className="text-[#f9f906] font-bold text-xl">Total</p>
-          <p className="text-[#f9f906] font-bold text-xl">
+      {/* Footer (Fixed) */}
+      <div className="shrink-0 p-6 border-t border-black mt-auto bg-white">
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-black font-medium text-lg uppercase tracking-wider">
+            Total
+          </p>
+          <p className="text-black font-black text-2xl">
             {formatCurrency(total)}
           </p>
         </div>
+
         <button
           onClick={() => setIsModalOpen(true)}
           disabled={isPending}
-          className="w-full mt-6 bg-[#f9f906] text-black text-xl font-bold py-4 rounded-lg hover:brightness-110 transition-all duration-300 shadow-[0_0_15px_rgba(249,249,6,0.4)] hover:shadow-[0_0_20px_rgba(249,249,6,0.6)]"
+          className="group w-full bg-black text-white text-lg font-black py-4 rounded-full 
+                     shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] 
+                     hover:shadow-none hover:translate-y-0.5 
+                     active:scale-[0.98] active:translate-y-0.5
+                     transition-all duration-200 ease-out 
+                     uppercase tracking-widest border border-black
+                     disabled:bg-gray-300 disabled:shadow-none disabled:border-gray-300 disabled:cursor-not-allowed"
         >
-          Lanjut Ke Pembayaran
+          {isPending ? "MEMPROSES..." : "BAYAR SEKARANG"}
         </button>
       </div>
+
       <PaymentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

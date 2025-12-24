@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import StatCard from "../../components/admin/StatCard";
-import { getTopProducts } from "../../services/productServices"; // Needs updating
-import { getOrderSummary } from "../../services/orderServices"; // Needs updating
-import { useState } from "react"; // Import useState
+import { getTopProducts } from "../../services/productServices";
+import { getOrderSummary } from "../../services/orderServices";
+import { useState } from "react";
 import TopSelling from "../../components/report/TopSelling";
 import { getAllUsers } from "../../services/userServices";
 import type { User } from "../../interfaces/authInterfaces";
-
-const GLOW_TEXT = "0 0 2px #f9f906, 0 0 5px #f9f906";
 
 interface OrderSummary {
   totalRevenue: number;
@@ -16,10 +14,9 @@ interface OrderSummary {
   itemsSold: number;
 }
 
-// Helper function to format Date object into YYYY-MM-DD string for input default
+// Helper function to format Date object into YYYY-MM-DD string
 const formatDate = (date: Date): string => {
   const year = date.getFullYear();
-  // Ensure month is 1-indexed and padded
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
   return `${year}-${month}-${day}`;
@@ -47,9 +44,7 @@ const Report = () => {
     isLoading: isTopProductsLoading,
     error: topProductsError,
   } = useQuery({
-    // 2. Add date range to queryKey to trigger refetch
     queryKey: ["topProducts", startDate, endDate, selectedUserId],
-    // 2. Pass dates to the service function
     queryFn: () => getTopProducts(startDate, endDate, selectedUserId),
   });
 
@@ -64,13 +59,11 @@ const Report = () => {
     isLoading: isSummaryLoading,
     error: summaryError,
   } = useQuery<OrderSummary>({
-    // 2. Add date range to queryKey to trigger refetch
     queryKey: ["summary", startDate, endDate, selectedUserId],
-    // 2. Pass dates to the service function
     queryFn: () => getOrderSummary(startDate, endDate, selectedUserId),
   });
 
-  // 3. HANDLERS to update state and trigger refetch
+  // 3. HANDLERS
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setStartDate(e.target.value);
   };
@@ -81,99 +74,113 @@ const Report = () => {
 
   const handleUserChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
-    // Logika: Jika value kosong, set undefined (tampilkan semua), jika ada angka set Number
     setSelectedUserId(val ? Number(val) : undefined);
   };
 
+  // Shared input class for consistency
+  const inputClass =
+    "h-12 w-full appearance-none rounded-lg border-2 border-black bg-white px-4 text-sm font-bold text-black placeholder-black/30 outline-none focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-200";
+  const labelClass =
+    "absolute -top-2.5 left-3 bg-white px-1 text-xs font-black uppercase tracking-widest text-black";
+
   return (
-    <main className="flex flex-1 flex-col p-6 lg:p-10">
+    // Main Container: White bg, Black text
+    <main className="flex flex-1 flex-col bg-white text-black min-h-full p-6 lg:p-10">
       <div className="layout-content-container flex flex-col w-full max-w-7xl mx-auto flex-1 h-full">
-        {/* Header */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <h1
-            className="text-[#f9f906] text-4xl font-bold leading-tight tracking-[-0.033em]"
-            style={{ textShadow: GLOW_TEXT }}
-          >
-            LAPORAN PENJUALAN
+        {/* Header Section */}
+        <div className="flex flex-col items-start justify-between gap-8 mb-10 border-b-2 border-black pb-8">
+          <h1 className="text-4xl sm:text-5xl font-black leading-tight tracking-tighter uppercase">
+            Laporan Penjualan
           </h1>
 
           {/* Filters & Actions */}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-end gap-4 w-full xl:w-auto">
             {/* Start Date Input */}
-            <div className="relative">
-              <label
-                htmlFor="start-date"
-                className="absolute -top-2.5 left-3 bg-[#0A0A0A] px-1 text-xs text-[#f9f906]/80"
-              >
+            <div className="relative w-full sm:w-auto sm:min-w-40">
+              <label htmlFor="start-date" className={labelClass}>
                 Awal
               </label>
               <input
                 id="start-date"
                 type="date"
-                className="h-10 w-full rounded-md border border-[#f9f906]/50 bg-[#0A0A0A] px-4 text-sm text-[#f9f906] placeholder-transparent outline-none focus:border-[#f9f906] focus:ring-1 focus:ring-[#f9f906] transition-shadow"
-                style={{ colorScheme: "dark" }}
-                value={startDate} // Controlled input
-                onChange={handleStartDateChange} // Add handler
+                className={inputClass}
+                value={startDate}
+                onChange={handleStartDateChange}
               />
             </div>
 
             {/* End Date Input */}
-            <div className="relative">
-              <label
-                htmlFor="end-date"
-                className="absolute -top-2.5 left-3 bg-[#0A0A0A] px-1 text-xs text-[#f9f906]/80"
-              >
+            <div className="relative w-full sm:w-auto sm:min-w-40">
+              <label htmlFor="end-date" className={labelClass}>
                 Akhir
               </label>
               <input
                 id="end-date"
                 type="date"
-                className="h-10 w-full rounded-md border border-[#f9f906]/50 bg-[#0A0A0A] px-4 text-sm text-[#f9f906] placeholder-transparent outline-none focus:border-[#f9f906] focus:ring-1 focus:ring-[#f9f906] transition-shadow"
-                style={{ colorScheme: "dark" }}
-                value={endDate} // Controlled input
-                onChange={handleEndDateChange} // Add handler
+                className={inputClass}
+                value={endDate}
+                onChange={handleEndDateChange}
               />
             </div>
 
             {/* Cashier Selection */}
-            <div className="flex flex-col justify-center items-center gap-2 mb-2">
-              <select
-                id="cashier-select"
-                className="mb-4 p-2 border border-black rounded w-full"
-                onChange={handleUserChange}
-              >
-                <option value="">
-                  {isLoadingUsers
-                    ? "Memuat data kasir..."
-                    : "Pilih Petugas Kasir"}
-                </option>
-                {users.map((user: User) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
+            <div className="relative w-full sm:w-auto sm:min-w-[200px]">
+              <div className="relative">
+                <select
+                  id="cashier-select"
+                  className={inputClass}
+                  onChange={handleUserChange}
+                >
+                  <option value="">
+                    {isLoadingUsers ? "Memuat..." : "SEMUA PETUGAS"}
                   </option>
-                ))}
-              </select>
+                  {users.map((user: User) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
+                    </option>
+                  ))}
+                </select>
+                {/* Custom Chevron */}
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-black">
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="3"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Stats Grid - Remains the same, but now uses data filtered by date state */}
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
-          <StatCard
-            title="TOTAL OMSET"
-            // Ensure you are handling the integer-as-cents to dollar conversion here if your backend returns cents!
-            value={orderSummary?.totalRevenue}
-            isCurrency
-            isLoading={isSummaryLoading}
-            isError={!!summaryError}
-          />
-          <StatCard
-            title="NILAI PENJUALAN RATA - RATA"
-            value={orderSummary.averageSaleValue}
-            isCurrency
-            isLoading={isSummaryLoading}
-            isError={!!summaryError}
-          />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="col-span-2">
+            <StatCard
+              title="TOTAL OMSET"
+              value={orderSummary?.totalRevenue}
+              isCurrency
+              isLoading={isSummaryLoading}
+              isError={!!summaryError}
+            />
+          </div>
+          <div className="col-span-2">
+            <StatCard
+              title="NILAI RATA - RATA"
+              value={orderSummary.averageSaleValue}
+              isCurrency
+              isLoading={isSummaryLoading}
+              isError={!!summaryError}
+            />
+          </div>
           <StatCard
             title="TOTAL ORDER"
             value={orderSummary.totalSales}
@@ -188,19 +195,21 @@ const Report = () => {
           />
         </div>
 
-        {/* Top Selling Products Table - Remains the same, but uses data filtered by date state */}
-        <div className="mt-10">
-          <h2
-            className="text-[#f9f906] text-[22px] font-bold leading-tight tracking-[-0.015em]"
-            style={{ textShadow: GLOW_TEXT }}
-          >
-            PRODUK TERLARIS
+        {/* Top Selling Products Table */}
+        <div className="mt-12">
+          <h2 className="mb-6 flex items-center gap-3 text-2xl font-black uppercase tracking-tight text-black">
+            <span className="h-3 w-3 rounded-full bg-black"></span>
+            Produk Terlaris
           </h2>
-          <TopSelling
-            products={topProducts}
-            isLoading={isTopProductsLoading}
-            isError={!!topProductsError}
-          />
+
+          {/* Table Container with Neo-Brutalist styling */}
+          <div className="overflow-hidden rounded-xl border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+            <TopSelling
+              products={topProducts}
+              isLoading={isTopProductsLoading}
+              isError={!!topProductsError}
+            />
+          </div>
         </div>
       </div>
     </main>

@@ -1,22 +1,22 @@
 import { useFormik } from "formik";
 import { ExpandMoreIcon, WarningIcon } from "../../components/Icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Loader from "../../components/Loader";
 import type { NewUser, UpdateUser } from "../../interfaces/userInterfaces";
-import { createUser, getUserById, updateUser } from "../../services/userServices";
+import {
+  createUser,
+  getUserById,
+  updateUser,
+} from "../../services/userServices";
 import { editUserSchema, userSchema } from "../../schemas/userSchema";
-
-// ... (Your GLOW_SHADOW and shifts constants remain the same) ...
-const GLOW_SHADOW_CONTAINER = "0 0 30px rgba(249,249,6,0.3)";
-const GLOW_SHADOW_INPUT = "0 0 10px rgba(249,249,6,0.2)";
-const TEXT_SHADOW_HEADER = "0 0 10px rgba(249,249,6,0.7)";
 
 const shifts = ["Siang", "Malam"];
 
 const AddEditUser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
 
   const pathSegments = location.pathname.split("/");
   const mode = pathSegments.includes("add") ? "add" : "edit";
@@ -26,15 +26,13 @@ const AddEditUser = () => {
     isLoading: isUserLoading,
     error: userError,
   } = useQuery({
-    queryKey: ["user", id], // Added id to queryKey for proper caching
+    queryKey: ["user", id],
     queryFn: () => getUserById(Number(id)),
-    enabled: mode === "edit" && !!id, // Only run if in edit mode and id exists
+    enabled: mode === "edit" && !!id,
   });
 
-  // ⭐️ CHANGE: Mutation now accepts FormData which includes the file
   const { mutate: addUser, isPending: addPending } = useMutation({
     mutationFn: async (data: NewUser) => {
-      // Your createUser service must be updated to accept and handle FormData
       return createUser(data);
     },
     onSuccess: () => {
@@ -45,10 +43,8 @@ const AddEditUser = () => {
     },
   });
 
-  // ⭐️ CHANGE: Mutation now accepts FormData which includes the file
   const { mutate: editUser, isPending: editPending } = useMutation({
     mutationFn: async (data: UpdateUser) => {
-      // Your updateProduct service must be updated to accept and handle FormData
       return updateUser(user!.id, data);
     },
     onSuccess: () => {
@@ -64,10 +60,13 @@ const AddEditUser = () => {
     initialValues: {
       name: user?.name || "",
       pin: user?.pin || "",
-      shift: user?.shift ? user.shift === "DAY" ? "Siang" : "Malam" : shifts[0],
+      shift: user?.shift
+        ? user.shift === "DAY"
+          ? "Siang"
+          : "Malam"
+        : shifts[0],
     },
     validationSchema: mode === "edit" ? editUserSchema : userSchema,
-    // ⭐️ CHANGE: Updated onSubmit to use FormData and include the file
     onSubmit: async (values) => {
       if (mode === "add") {
         addUser(values as NewUser);
@@ -77,89 +76,86 @@ const AddEditUser = () => {
     },
   });
 
+  // --- Shared B&W Styles ---
+  const inputClass =
+    "flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black py-2 focus:outline-0 border-2 border-black bg-white h-14 placeholder:text-black/30 px-4 text-base font-bold transition-all duration-200 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]";
+  const labelClass =
+    "text-black text-sm font-black uppercase tracking-wide pb-2";
+  const errorClass = "text-red-600 text-xs font-bold mt-1 uppercase";
+
   return (
-    <main className="flex-1 layout-container flex h-full grow flex-col">
-      <div className="flex flex-1 justify-center items-center py-10 px-4">
+    // Main Container
+    <main className="flex-1 flex flex-col h-full bg-white p-6 lg:p-10">
+      <div className="flex justify-center">
+        {/* Card Container */}
         <div
-          className="layout-content-container flex flex-col w-full max-w-4xl p-8 bg-[#0A0A0A] border border-[#f9f906] rounded-xl"
-          style={{ boxShadow: GLOW_SHADOW_CONTAINER }}
+          className="w-full max-w-2xl bg-white border-2 border-black rounded-xl p-8"
+          style={{ boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)" }}
         >
           {/* Header */}
-          <div className="flex flex-wrap justify-between gap-3 mb-8">
-            <h1
-              className="text-[#f9f906] text-4xl font-black leading-tight tracking-[-0.033em] min-w-72"
-              style={{ textShadow: TEXT_SHADOW_HEADER }}
-            >
-              {mode === "add" ? "TAMBAH" : "EDIT"} PETUGAS KASIR
+          <div className="mb-8 border-b-2 border-black pb-6">
+            <h1 className="text-black text-4xl font-black leading-tight tracking-tighter uppercase">
+              {mode === "add" ? "Tambah" : "Edit"} Petugas
             </h1>
           </div>
 
-          {/* Form Grid */}
+          {/* Form Content */}
           {isUserLoading || !!userError ? (
-            <div className="flex flex-col gap-3 justify-center items-center">
-              {userError ? <WarningIcon /> : <Loader size="md" />}
-              <p className="text-white">
-                {userError
-                  ? "Error Loading users"
-                  : "Loading users..."}
+            <div className="flex flex-col gap-4 justify-center items-center py-20">
+              {userError ? (
+                <WarningIcon />
+              ) : (
+                <Loader size="md" variant="dark" />
+              )}
+              <p className="text-black font-bold uppercase tracking-wider">
+                {userError ? "Gagal Memuat Data" : "Memuat Data User..."}
               </p>
             </div>
           ) : (
             <form onSubmit={formik.handleSubmit}>
-              <div className="grid grid-cols-1 gap-8">
-                {/* Left Column (Inputs) - NO CHANGES HERE */}
-                {/* ... (Your left column inputs for name, price, stock, shift) ... */}
-                <div className="md:col-span-2 flex flex-col gap-6">
-                  {/* Product Name */}
-                  <label className="flex flex-col w-full">
-                    <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      Nama
-                    </p>
-                    <input
-                      name="name"
-                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
-                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
-                      value={formik.values.name}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    />
-                    {formik.touched.name && formik.errors.name && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {formik.errors.name}
-                      </p>
-                    )}
-                  </label>
+              <div className="flex flex-col gap-6">
+                {/* Name Input */}
+                <label className="flex flex-col w-full">
+                  <p className={labelClass}>Nama Petugas</p>
+                  <input
+                    name="name"
+                    className={inputClass}
+                    placeholder="Contoh: Kasir 1"
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.name && formik.errors.name && (
+                    <p className={errorClass}>{formik.errors.name}</p>
+                  )}
+                </label>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* PIN Input */}
                   <label className="flex flex-col w-full">
-                    <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      PIN
-                    </p>
+                    <p className={labelClass}>PIN Akses</p>
                     <input
                       name="pin"
-                      type="password"
-                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal"
-                      style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                      type="password" // Hidden for security, or text if you prefer visibility
+                      maxLength={6} // Assuming 6 digit pin
+                      className={inputClass}
+                      placeholder="******"
                       value={formik.values.pin}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                     />
                     {formik.touched.pin && formik.errors.pin && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {formik.errors.pin}
-                      </p>
+                      <p className={errorClass}>{formik.errors.pin}</p>
                     )}
                   </label>
 
                   {/* Shift Select */}
                   <label className="flex flex-col w-full">
-                    <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-                      Shift
-                    </p>
+                    <p className={labelClass}>Shift Kerja</p>
                     <div className="relative">
                       <select
                         name="shift"
-                        className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906]/50 border border-[#f9f906]/50 bg-[#000000] h-14 placeholder:text-[#f9f906]/50 px-[15px] text-base font-normal leading-normal appearance-none cursor-pointer"
-                        style={{ boxShadow: GLOW_SHADOW_INPUT }}
+                        className={`${inputClass} appearance-none cursor-pointer`}
                         value={formik.values.shift}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -170,37 +166,50 @@ const AddEditUser = () => {
                           </option>
                         ))}
                       </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#f9f906]">
+                      {/* Custom Arrow */}
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-black">
                         <ExpandMoreIcon />
                       </div>
                     </div>
                     {formik.touched.shift && formik.errors.shift && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {formik.errors.shift}
-                      </p>
+                      <p className={errorClass}>{formik.errors.shift}</p>
                     )}
                   </label>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              {/* ... (Your action buttons remain the same) ... */}
-              <div className="mt-10 flex flex-wrap justify-end gap-4">
+              <div className="mt-10 flex flex-wrap justify-end gap-4 border-t-2 border-black pt-6">
                 <button
                   type="button"
-                  className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#0A0A0A] px-6 py-2 text-base font-bold text-[#f9f906] ring-2 ring-[#f9f906] transition-all hover:bg-[#f9f906]/10"
+                  className="
+                    flex h-12 min-w-32 cursor-pointer items-center justify-center 
+                    rounded-lg bg-white px-6 py-2 
+                    text-base font-black uppercase tracking-wider text-black 
+                    border-2 border-black
+                    hover:bg-black hover:text-white 
+                    transition-all duration-200
+                  "
                   onClick={() => navigate("/admin/users")}
                   disabled={addPending || editPending}
                 >
-                  BATAL
+                  Batal
                 </button>
                 <button
                   type="submit"
-                  // The form is ready to submit if either file is present (add) or form has changes (edit)
                   disabled={formik.isSubmitting || addPending || editPending}
-                  className="flex h-12 min-w-32 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-[#f9f906] px-6 py-2 text-base font-bold text-[#0A0A0A] transition-all hover:brightness-110 shadow-[0_0_15px_rgba(249,249,6,0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="
+                    flex h-12 min-w-32 cursor-pointer items-center justify-center 
+                    rounded-lg bg-black px-6 py-2 
+                    text-base font-black uppercase tracking-wider text-white
+                    border-2 border-black
+                    shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+                    hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none
+                    transition-all duration-200
+                  "
                 >
-                  {formik.isSubmitting ? "MENYIMPAN..." : "SIMPAN"}
+                  {formik.isSubmitting ? "Menyimpan..." : "Simpan"}
                 </button>
               </div>
             </form>

@@ -15,45 +15,55 @@ const Pos = () => {
   const [activeCategory, setActiveCategory] = useState(categories[0]);
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden text-black">
-      <div className="flex h-full w-full">
+    <div className="relative h-screen w-full overflow-hidden bg-white text-black">
+      {/* Updated Layout:
+        - Changed 'flex' to 'grid grid-cols-3'
+        - This creates a 3-column grid system
+      */}
+      <div className="grid grid-cols-3 h-full w-full">
         {/* --- Left Column (Menu) --- */}
-        <div className="flex flex-col w-[65%] h-full">
+        {/* Takes up 2 out of 3 columns (approx 66%) */}
+        <div className="col-span-2 flex flex-col h-full border-r border-black">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-b-gray-200">
+          <div className="flex h-20 px-6 items-center justify-between border-b border-black">
             <div className="flex items-center gap-3">
               <img
-                className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAW_zDxbYU1GJ2Fcl5dsuf3x992q8SyTXZdXj8JUOL6EGBaQakQQ2ruLIof4z239rhkznkUGwCR0fVu-o3ghSBDc11Z_ud02OLsCMPClKQlSDtZ7QbruHX2PBRJyhW9nNKtxn9Pjadd5g3jYwwknEaxFMPnX2IArGqUshqyahDMS62x03kN0v6eM1niLyuwSBaKFEn2CB3jjXMfZAS7nxjNWROjBenNyjNbm8d-ZfP2Pi3IH8lqeEGztDDsTsRWZVNdVxS0bmBvqqg"
+                className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-11 border border-black p-0.5"
+                src="/diarylogo.jpeg"
+                alt="Profile"
               />
               <div className="flex flex-col leading-tight">
-                <h1 className="text-black uppercase text-lg font-bold leading-normal">
+                <h1 className="text-black uppercase text-lg font-black tracking-tight leading-none">
                   Diary Kasir
                 </h1>
-                <p>{user?.name}</p>
+                <p className="font-medium text-sm text-black/60">
+                  {user?.name}
+                </p>
               </div>
             </div>
+
             {/* Search Bar */}
             <div className="relative w-1/3">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-black/50">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-black/70">
                 <SearchIcon />
               </div>
               <input
-                className="w-full bg-white border border-black/10 rounded-lg py-2 pl-10 pr-4 text-black placeholder:text-black/40 focus:ring-black focus:border-black outline-none transition-shadow duration-300 focus:shadow-[0_0_10px_rgba(0,0,0,0.08)]"
-                placeholder="Cari produk..."
+                className="w-full bg-white border border-black rounded-full py-2.5 pl-11 pr-5 text-black placeholder:text-black/40 text-sm font-medium focus:outline-none focus:bg-gray-50 focus:shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] transition-all duration-200 ease-out"
+                placeholder="Cari menu..."
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+
             <div>
               <LogoutButton onClick={logout} />
             </div>
           </div>
 
-          {/* Tabs */}
-          <div className="flex-1 overflow-y-auto px-6 scrollbar-thin scrollbar-thumb-[#f9f906]/20 scrollbar-track-transparent">
-            <div className="mb-4">
+          {/* Tabs and Products Area */}
+          <div className="flex-1 overflow-y-auto px-6 scrollbar-thin scrollbar-thumb-black/20 scrollbar-track-transparent hover:scrollbar-thumb-black/40">
+            <div className="mt-6 mb-4">
               <ProductTab
                 categories={categories}
                 activeCategory={activeCategory}
@@ -61,16 +71,21 @@ const Pos = () => {
               />
             </div>
 
-            {/* products */}
-            <ProductSection
-              searchQuery={searchQuery}
-              activeCategory={activeCategory}
-            />
+            {/* Products Grid */}
+            <div className="pb-6">
+              <ProductSection
+                searchQuery={searchQuery}
+                activeCategory={activeCategory}
+              />
+            </div>
           </div>
         </div>
 
         {/* --- Right Column (Cart) --- */}
-        <CartSection />
+        {/* Takes up 1 out of 3 columns (approx 33%) */}
+        <div className="col-span-1 h-full bg-white">
+          <CartSection />
+        </div>
       </div>
     </div>
   );

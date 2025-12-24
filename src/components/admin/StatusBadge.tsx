@@ -1,23 +1,42 @@
 const StatusBadge = ({ status }: { status: string }) => {
-  let styles = "";
-  let dotColor = "";
+  const normalizedStatus = status.toLowerCase();
 
-  if (status === "Rendah") {
-    styles = "bg-yellow-400/10 text-yellow-400";
-    dotColor = "bg-yellow-400";
-  } else if (status === "Cukup") {
-    styles = "bg-green-500/10 text-green-400";
-    dotColor = "bg-green-500";
-  } else if (status === "Habis") {
-    styles = "bg-red-500/10 text-red-500";
-    dotColor = "bg-red-500";
+  let styles = "";
+
+  // Logic for B&W Theme:
+  // 1. Cukup (Good) -> Solid Black (Strongest visual)
+  // 2. Rendah (Warning) -> Outlined (Standard)
+  // 3. Habis (Critical) -> Dashed Border (Implies empty/broken)
+
+  if (normalizedStatus === "rendah" || normalizedStatus === "low") {
+    styles = "bg-white text-black border-2 border-black";
+  } else if (
+    normalizedStatus === "cukup" ||
+    normalizedStatus === "active" ||
+    normalizedStatus === "siang"
+  ) {
+    styles = "bg-black text-white border-2 border-black";
+  } else if (
+    normalizedStatus === "habis" ||
+    normalizedStatus === "out of stock" ||
+    normalizedStatus === "sangat rendah"
+  ) {
+    styles =
+      "bg-white text-black border-2 border-dashed border-black opacity-60";
+  } else {
+    // Default fallback
+    styles = "bg-white text-black border-2 border-black";
   }
 
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-xs ${styles}`}
+      className={`
+        inline-flex items-center justify-center 
+        px-3 py-1 rounded-full 
+        text-xs font-black uppercase tracking-widest
+        ${styles}
+      `}
     >
-      <span className={`h-2 w-2 rounded-full ${dotColor}`}></span>
       {status}
     </div>
   );

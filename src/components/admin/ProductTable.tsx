@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "../../helper/formatCurrentcy";
 import type { Product } from "../../interfaces/productInterfaces";
-import { GLOW_TEXT } from "../../pages/admin/Dashboard";
 import { DeleteIcon, EditIcon, WarningIcon } from "../Icons";
 import Loader from "../Loader";
 import StatusBadge from "./StatusBadge";
@@ -16,7 +15,6 @@ interface props {
 
 const ProductTable = ({ products, isLoading, isError }: props) => {
   const navigate = useNavigate();
-
   const queryClient = useQueryClient();
 
   const { mutate: deleteItem, isPending: deletePending } = useMutation({
@@ -32,76 +30,93 @@ const ProductTable = ({ products, isLoading, isError }: props) => {
     },
   });
 
+  // 1. Loading / Error State
   if (isLoading || isError)
     return (
-      <div className="overflow-x-auto">
-        <div className="w-full min-h-80 flex flex-col gap-1 justify-center items-center">
-          {isError ? <WarningIcon /> : <Loader size="md" />}
-          <p>{isError ? "Error Memuat Produk" : "Memuat Produk..."}</p>
+      <div className="w-full bg-white">
+        <div className="w-full min-h-80 flex flex-col gap-4 justify-center items-center">
+          {isError ? (
+            <WarningIcon />
+          ) : (
+            <Loader size="md" variant="dark" />
+          )}
+          <p className="text-black font-bold uppercase tracking-wider">
+            {isError ? "Gagal Memuat Data" : "Memuat Data Produk..."}
+          </p>
         </div>
       </div>
     );
 
+  // 2. Empty State
   if (products.length === 0)
     return (
-      <div className="overflow-x-auto">
-        <div className="w-full min-h-80 flex flex-col gap-1 justify-center items-center">
-          <p>Tidak Ada Produk</p>
+      <div className="w-full bg-white">
+        <div className="w-full min-h-80 flex flex-col gap-2 justify-center items-center">
+          <p className="text-black font-black uppercase tracking-widest text-lg">
+            Tidak Ada Produk
+          </p>
         </div>
       </div>
     );
 
   return (
-    <table className="w-full text-left">
-      <thead className="border-b border-[#f9f906]/20">
-        {/* Table Headers remain the same */}
+    <table className="w-full text-left border-collapse">
+      {/* Header: Solid Black for High Contrast */}
+      <thead className="bg-black text-white">
         <tr>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70">
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest">
             # ID
           </th>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70">
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest">
             Gambar
           </th>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70">
-            Nama
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest">
+            Nama Produk
           </th>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70 text-right">
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest text-right">
             Harga
           </th>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70 text-right">
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest text-right">
             Stok
           </th>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70 text-center">
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest text-center">
             Status
           </th>
-          <th className="py-4 px-2 text-sm font-semibold uppercase text-[#f9f906]/70 text-center">
+          <th className="py-4 px-4 text-xs font-black uppercase tracking-widest text-center">
             Tindakan
           </th>
         </tr>
       </thead>
-      <tbody>
+
+      {/* Body: White Background, Black Text */}
+      <tbody className="bg-white text-black">
         {products.map((product: Product) => (
           <tr
             key={product.id}
-            className="border-b border-[#f9f906]/10 last:border-none hover:bg-white/5 transition-colors"
+            className="border-b border-black/10 hover:bg-gray-50 transition-colors"
           >
-            {/* Table Cells remain the same */}
-            <td className="p-4 text-sm text-white/70">{product.id}</td>
-            <td className="p-4 text-sm text-white/90">
-              <img
-                className="w-10 h-10 rounded-sm object-cover"
-                src={product.image as string}
-                alt="product image"
-              />
+            <td className="p-4 text-sm font-medium text-black/60">
+              #{product.id}
             </td>
-            <td className="p-4 text-sm text-white/90">{product.name}</td>
-            <td className="p-4 text-sm text-white/90 text-right">
+            <td className="p-4">
+              <div className="h-12 w-12 rounded-lg border border-black p-0.5 bg-white">
+                <img
+                  className="h-full w-full rounded-md object-cover"
+                  src={product.image as string}
+                  alt="product image"
+                />
+              </div>
+            </td>
+            <td className="p-4 text-sm font-bold uppercase text-black">
+              {product.name}
+            </td>
+            <td className="p-4 text-sm font-black text-right text-black">
               {formatCurrency(product.price)}
             </td>
-            <td className="p-4 text-sm text-white/90 text-right">
+            <td className="p-4 text-sm font-medium text-right text-black">
               {product.stock}
             </td>
-            <td className="p-4 text-sm text-center">
+            <td className="p-4 text-center">
               <StatusBadge
                 status={
                   product.stock < 10
@@ -114,19 +129,32 @@ const ProductTable = ({ products, isLoading, isError }: props) => {
             </td>
             <td className="p-4">
               <div className="flex items-center justify-center gap-2">
+                {/* Edit Button: Pill Style */}
                 <button
-                  className="text-[#f9f906] hover:text-[#f9f906]/70 transition-all duration-200"
-                  style={{ textShadow: GLOW_TEXT }}
+                  className="
+                    flex items-center justify-center h-8 w-8 rounded-full 
+                    border border-black text-black 
+                    hover:bg-black hover:text-white 
+                    transition-all duration-200
+                  "
                   disabled={deletePending}
                   onClick={() => navigate(`/admin/products/edit/${product.id}`)}
+                  title="Edit"
                 >
                   <EditIcon />
                 </button>
+
+                {/* Delete Button: Pill Style */}
                 <button
-                  className="text-[#f9f906] hover:text-[#f9f906]/70 transition-all duration-200"
-                  style={{ textShadow: GLOW_TEXT }}
+                  className="
+                    flex items-center justify-center h-8 w-8 rounded-full 
+                    border border-black text-black 
+                    hover:bg-black hover:text-white 
+                    transition-all duration-200
+                  "
                   disabled={deletePending}
                   onClick={() => deleteItem(product.id)}
+                  title="Delete"
                 >
                   <DeleteIcon />
                 </button>
