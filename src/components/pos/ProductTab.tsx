@@ -1,31 +1,41 @@
 interface props {
-    categories: string[];
-    activeCategory: string;
-    onSetCategory: (category: string) => void;
+  categories: string[];
+  activeCategory: string;
+  onSetCategory: (category: string) => void;
 }
 
 const ProductTab = ({ categories, activeCategory, onSetCategory }: props) => {
   return (
-    <div className="pb-3">
-      <div className="flex border-b border-[#f9f906]/20 gap-8">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => onSetCategory(category)}
-            className={`flex flex-col items-center justify-center border-b-[3px] pb-[13px] pt-2 transition-colors duration-300 ${
-              activeCategory === category
-                ? "border-b-[#f9f906] text-[#f9f906]"
-                : "border-b-transparent text-[#f9f906]/60 hover:text-[#f9f906]"
-            }`}
-          >
-            <p className="text-base font-bold leading-normal tracking-[0.015em]">
+    <div className="w-full bg-white pb-2">
+      {/* Container: 
+        - Removed the bottom border line to make it look like floating chips.
+        - Added 'overflow-x-auto' to ensure it scrolls horizontally on smaller screens.
+      */}
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {categories.map((category) => {
+          const isActive = activeCategory === category;
+
+          return (
+            <button
+              key={category}
+              onClick={() => onSetCategory(category)}
+              className={`
+                relative px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 ease-out
+                border border-black
+                ${
+                  isActive
+                    ? "bg-black text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] translate-y-0.5"
+                    : "bg-white text-black hover:bg-black hover:text-white hover:shadow-lg"
+                }
+              `}
+            >
               {category}
-            </p>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
-}
+};
 
-export default ProductTab
+export default ProductTab;

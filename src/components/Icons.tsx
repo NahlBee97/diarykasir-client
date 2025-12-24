@@ -181,25 +181,6 @@ export const AssessmentIcon = () => (
   </svg>
 );
 
-export const LogoutIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-6 h-6"
-  >
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-    <polyline points="16 17 21 12 16 7" />
-    <line x1="21" y1="12" x2="9" y2="12" />
-  </svg>
-);
-
 export const WarningIcon = ({ isRed = false }: { isRed?: boolean }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -207,7 +188,7 @@ export const WarningIcon = ({ isRed = false }: { isRed?: boolean }) => (
     height="24"
     viewBox="0 0 24 24"
     fill="currentColor"
-    className={`w-5 h-5 ${isRed ? "text-red-500" : "text-yellow-400"} `}
+    className={`w-5 h-5 ${isRed ? "text-red-500" : "text-black"} `}
   >
     <path d="M12 2L1 21h22L12 2zm1 17h-2v-2h2v2zm0-4h-2v-6h2v6z" />
   </svg>
@@ -321,10 +302,9 @@ export const CloseIcon = () => (
 
 export const ShoppingBasketIcon = () => (
   <svg
-    className="text-[#f9f906]"
+    className="text-gray-500"
     fill="none"
     height="100%"
-    style={{ filter: "drop-shadow(0 0 10px #f9f906)" }}
     viewBox="0 0 24 24"
     width="100%"
     xmlns="http://www.w3.org/2000/svg"
@@ -355,5 +335,23 @@ export const UserIcon = () => (
     fill="currentColor"
   >
     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+  </svg>
+);
+
+export const LogoutIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18" // Slightly smaller to fit the modern pill shape better
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5" // Increased weight for better visibility
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
   </svg>
 );

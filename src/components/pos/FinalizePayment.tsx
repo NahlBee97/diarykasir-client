@@ -18,9 +18,6 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   const [cashReceived, setCashReceived] = useState<string>("");
   const [change, setChange] = useState<number>(0);
 
-  // Constants for styling
-  const PRIMARY_COLOR = "#f9f906";
-
   // Calculate change whenever input changes
   useEffect(() => {
     setChange(Math.max(0, Number(cashReceived) - total));
@@ -34,76 +31,80 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 font-sans backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 font-sans backdrop-blur-sm">
       {/* Modal Container */}
       <div
-        className="relative flex w-full max-w-lg flex-col gap-6 rounded-xl border bg-black p-8 transition-all duration-300 transform scale-100"
+        className="relative flex w-full max-w-lg flex-col gap-6 bg-white p-8 transition-all duration-300 transform scale-100 border-2 border-black"
+        // Solid black shadow for the "Pop" B&W aesthetic
         style={{
-          borderColor: "rgba(249, 249, 6, 0.5)",
-          boxShadow: `0 0 5px ${PRIMARY_COLOR}, 0 0 10px ${PRIMARY_COLOR}, 0 0 15px ${PRIMARY_COLOR}, 0 0 20px ${PRIMARY_COLOR}`,
+          boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)",
         }}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-[#f9f906]/70 hover:text-[#f9f906] transition-colors"
+          className="absolute top-4 right-4 text-black hover:bg-black hover:text-white rounded-full p-1 transition-all duration-200"
         >
           <CloseIcon />
         </button>
 
-        {/* Headline: FINALIZE PAYMENT */}
-        <div className="flex flex-col items-center">
-          <h1
-            className="text-[#f9f906] tracking-tight text-[32px] font-bold leading-tight text-center pb-3 pt-6"
-            style={{ textShadow: "0 0 8px rgba(249, 249, 6, 0.5)" }}
-          >
-            PEMBAYARAN
+        {/* Headline */}
+        <div className="flex flex-col items-center border-b-2 border-black pb-4">
+          <h1 className="text-black tracking-tight text-3xl font-black leading-tight text-center uppercase">
+            Pembayaran
           </h1>
         </div>
 
         {/* Total Amount Display */}
-        <div className="flex flex-col items-center">
-          <h1
-            className="text-[#f9f906] tracking-tight text-[40px] font-bold leading-tight text-center pb-3 pt-2"
-            style={{ textShadow: "0 0 8px rgba(249, 249, 6, 0.5)" }}
-          >
-            TOTAL : {formatCurrency(total)}
+        <div className="flex flex-col items-center bg-black py-4">
+          <h1 className="text-white tracking-tight text-3xl font-black leading-tight text-center uppercase">
+            Total : {formatCurrency(total)}
           </h1>
         </div>
 
         {/* Cash Received Input */}
-        <div className="flex w-full flex-wrap items-end gap-4 px-4 py-3">
-          <label className="flex flex-col w-full flex-1">
-            <p className="text-[#f9f906] text-base font-medium leading-normal pb-2">
-              Uang Diterima
-            </p>
-            <input
-              className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#f9f906] focus:outline-0 focus:ring-2 focus:ring-[#f9f906] border border-[#f9f906]/50 bg-[#23230f] h-14 placeholder:text-[#f9f906]/50 p-[15px] text-base font-normal leading-normal transition-shadow"
-              style={{
-                boxShadow: `0 0 5px ${PRIMARY_COLOR}, 0 0 10px ${PRIMARY_COLOR}`,
-              }}
-              value={cashReceived}
-              onChange={handleInputChange}
-              type="number"
-            />
+        <div className="flex w-full flex-col gap-2">
+          <label className="text-black text-sm font-bold uppercase tracking-wider">
+            Uang Diterima
           </label>
+          <input
+            autoFocus
+            className="w-full border-2 border-black bg-white h-14 px-4 text-xl font-bold text-black placeholder:text-black/30 focus:outline-none focus:bg-gray-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
+            placeholder="Masukkan jumlah uang..."
+            value={cashReceived}
+            onChange={handleInputChange}
+            type="number"
+          />
         </div>
 
         {/* Change Due Display */}
-        <div className="flex flex-col items-center">
-          <h1 className="text-[#f9f906] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 text-center pb-3 pt-2">
-            Pengembalian: {formatCurrency(change)}
+        <div className="flex flex-col items-center py-2">
+          <p className="text-black/60 text-sm font-bold uppercase tracking-wider">
+            Kembalian
+          </p>
+          <h1 className="text-black text-3xl font-black leading-tight mt-1">
+            {formatCurrency(change)}
           </h1>
         </div>
 
         {/* Pay Button */}
-        <div className="flex px-4 py-3 justify-center w-full mt-4">
+        <div className="flex justify-center w-full mt-2">
           <button
             onClick={() => onConfirm(Number(cashReceived), change)}
             disabled={Number(cashReceived) < total}
-            className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 flex-1 bg-[#f9f906] text-[#23230f] text-lg font-bold leading-normal tracking-[0.015em] hover:bg-yellow-300 transition-colors hover:shadow-[0_0_15px_rgba(249,249,6,0.5)] disabled:cursor-not-allowed"
+            className="
+              w-full h-14
+              bg-black text-white 
+              text-lg font-black uppercase tracking-widest
+              border-2 border-black
+              shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]
+              hover:shadow-none hover:translate-y-0.5 hover:translate-x-0.5
+              active:scale-[0.99]
+              disabled:bg-gray-300 disabled:border-gray-300 disabled:shadow-none disabled:cursor-not-allowed
+              transition-all duration-200 ease-out
+            "
           >
-            <span className="truncate">BAYAR & PRINT STRUK</span>
+            Bayar & Print Struk
           </button>
         </div>
       </div>

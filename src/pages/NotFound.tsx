@@ -1,19 +1,20 @@
 import { useNavigate } from "react-router-dom";
 
+// Updated Illustration: Clean Black Lines, no glow
 const EmptyBucketIllustration = () => (
   <svg
-    className="w-full h-auto text-[#f9f906] filter drop-shadow-[0_0_8px_rgba(249,249,6,0.6)]"
+    className="w-full h-auto text-black"
     fill="none"
     viewBox="0 0 120 100"
     xmlns="http://www.w3.org/2000/svg"
   >
-    {/* Bucket Outline */}
+    {/* Bucket Outline - Thicker stroke for B&W bold look */}
     <path
       d="M10 20 L20 100 H100 L110 20 M10 20 C30 0, 90 0, 110 20"
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="4"
+      strokeWidth="6"
     />
     {/* Sad Face / Empty details */}
     <path
@@ -21,14 +22,14 @@ const EmptyBucketIllustration = () => (
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="3"
+      strokeWidth="4"
     />
     <path
       d="M75 40 L80 70"
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth="3"
+      strokeWidth="4"
     />
   </svg>
 );
@@ -37,52 +38,66 @@ const EmptyBucketIllustration = () => (
 
 const NotFound = () => {
   const navigate = useNavigate();
+
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col bg-[#0A0A0A] dark group/design-root overflow-hidden font-sans">
-      {/* Background Radial Gradient */}
+    <div className="relative flex h-screen w-full flex-col bg-white overflow-hidden font-sans text-black selection:bg-black selection:text-white">
+      {/* Decorative Background Pattern (Optional - dot grid) */}
       <div
-        className="absolute inset-0 z-0 pointer-events-none"
+        className="absolute inset-0 opacity-[0.05]"
         style={{
-          background:
-            "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(249,249,6,0.1), rgba(10,10,10,0))",
+          backgroundImage: "radial-gradient(#000 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
         }}
       ></div>
 
       <div className="layout-container relative z-10 flex h-full grow flex-col">
         <div className="flex flex-1 items-center justify-center p-4 sm:p-6 md:p-8">
-          <div className="layout-content-container flex max-w-lg flex-1 flex-col items-center gap-4 text-center">
-            {/* 404 Glitch Text */}
+          <div className="layout-content-container flex max-w-lg flex-1 flex-col items-center gap-2 text-center">
+            {/* 404 Text - Huge & Heavy */}
             <h1
-              className="text-[#f9f906] tracking-tighter text-[15vw] sm:text-[144px] md:text-[160px] lg:text-[200px] font-bold leading-none"
+              className="text-black tracking-tighter text-[15vw] sm:text-[100px] md:text-[160px] font-black leading-none"
+              // Hard gray shadow for depth without color
               style={{
-                textShadow: "0 0 20px rgba(249,249,6,0.5)",
+                textShadow: "10px 10px 0px rgba(0,0,0,0.1)",
               }}
             >
               404
             </h1>
 
-            {/* Illustration */}
+            {/* Illustration Container */}
             <div
-              className="flex w-full max-w-[120px] justify-center text-[#f9f906]"
-              aria-label="Stylized minimalist illustration of an empty fried chicken bucket in glowing neon lines"
+              className="flex w-full max-w-[120px] justify-center mb-2"
+              aria-label="Empty bucket illustration"
             >
               <EmptyBucketIllustration />
             </div>
 
             {/* Page Not Found Text */}
-            <h2
-              className="text-[#f9f906] text-[22px] sm:text-[28px] font-bold leading-tight tracking-wider mt-4"
-              style={{
-                textShadow: "0 0 10px rgba(249,249,6,0.5)",
-              }}
-            >
+            <h2 className="text-black text-2xl sm:text-3xl font-black uppercase tracking-widest">
               Halaman Tidak Ditemukan
             </h2>
 
+            <p className="text-black/50 font-medium mt-2 max-w-md">
+              Sepertinya halaman yang anda cari sudah tidak ada atau telah
+              dipindahkan.
+            </p>
+
             {/* Action Button */}
-            <div className="flex w-full justify-center pt-8"
-            onClick={() => navigate("/")}>
-              <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-8 bg-[#f9f906] text-[#0A0A0A] text-base font-bold uppercase tracking-[0.05em] transition-all hover:shadow-[0_0_15px_rgba(249,249,6,0.8)] focus:outline-none focus:ring-2 focus:ring-[#f9f906] focus:ring-offset-2 focus:ring-offset-black">
+            <div className="flex w-full justify-center pt-4">
+              <button
+                onClick={() => navigate("/")}
+                className="
+                    group flex items-center justify-center 
+                    h-14 px-10 rounded-full
+                    bg-white text-black border-2 border-black
+                    text-lg font-black uppercase tracking-widest
+                    shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
+                    hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]
+                    hover:bg-black hover:text-white
+                    active:scale-95
+                    transition-all duration-200 ease-out
+                "
+              >
                 <span>Kembali</span>
               </button>
             </div>

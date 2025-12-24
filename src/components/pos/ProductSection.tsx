@@ -64,31 +64,39 @@ const ProductSection = ({
     });
   }, [products, searchQuery, activeCategory]);
 
-  if (filteredItems.length === 0) {
-    return (
-      <div className="flex flex-col gap-2 w-full h-full items-center justify-center">
-        <h3 className="text-[#f9f906]">Tidak Ada Produk</h3>
-      </div>
-    );
-  }
-
+  // --- Loading / Error State ---
   if (isProductLoading || productError) {
     return (
-      <div className="flex flex-col gap-2 w-full h-full items-center justify-center">
+      <div className="flex flex-col gap-4 w-full h-[50vh] items-center justify-center">
         {productError ? (
           <WarningIcon />
         ) : (
-          <Loader size="lg" variant="primary" />
+          <Loader size="lg" variant="dark" />
         )}
-        <h3 className="text-[#f9f906]">
-          {productError ? "Gangguan Memuat Product..." : "Memuat Product..."}
+        <h3 className="text-black font-black uppercase tracking-widest text-sm">
+          {productError ? "Gagal Memuat Data" : "Memuat Produk..."}
         </h3>
       </div>
     );
   }
 
+  // --- Empty State ---
+  if (filteredItems.length === 0) {
+    return (
+      <div className="flex flex-col gap-3 w-full h-64 items-center justify-center border-2 border-dashed border-black/10 rounded-2xl m-2">
+        <h3 className="text-black font-bold text-lg uppercase">
+          Tidak Ada Produk
+        </h3>
+        <p className="text-black/40 font-medium text-sm">
+          Coba cari dengan kata kunci lain
+        </p>
+      </div>
+    );
+  }
+
+  // --- Grid Layout ---
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
       {filteredItems.map((item) => (
         <ProductCard
           key={item.id}

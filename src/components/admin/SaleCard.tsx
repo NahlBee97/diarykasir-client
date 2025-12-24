@@ -3,32 +3,58 @@ import { formatCurrency } from "../../helper/formatCurrentcy";
 import type { Order } from "../../interfaces/orderInterface";
 import OrderDetailsModal from "./DetailOrderModal";
 import { format } from "date-fns";
-
-const GLOW_BORDER_SUBTLE = "0 0 5px rgba(249, 249, 6, 0.3)";
+import { id } from "date-fns/locale"; // Import Indonesian locale if needed
 
 const SaleCard = ({ order }: { order: Order }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <div
-      className="flex items-center p-4 bg-[#111111] border border-[#f9f906]/50 rounded-lg transition-all duration-300 hover:shadow-[0_0_10px_rgba(249,249,6,0.5)] hover:border-[#f9f906]"
-      style={{ boxShadow: GLOW_BORDER_SUBTLE }}
+      className="
+        group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 
+        p-5 bg-white border-2 border-black rounded-xl 
+        shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+        hover:bg-gray-300
+      "
     >
-      <div className="w-1/4 text-white font-medium">#{order.id}</div>
-      <div className="w-1/4 text-[#f9f906]/80">
-        {format(order.createdAt, "dd MMM yyy HH:mm")}
+      {/* Order ID & Date Group */}
+      <div className="flex flex-col gap-1 w-full sm:w-1/3">
+        <span className="text-black font-black text-lg tracking-tight">
+          #{order.id}
+        </span>
+        <span className="text-black/60 font-bold text-xs uppercase tracking-wide">
+          {format(order.createdAt, "dd MMM yyyy • HH:mm", { locale: id })}
+        </span>
       </div>
-      <div className="w-1/4 text-white font-semibold">
-        {formatCurrency(order.totalAmount)}
+
+      {/* Total Amount */}
+      <div className="w-full sm:w-1/3 text-left sm:text-center">
+        <span className="text-black font-black text-xl tracking-tight block sm:inline">
+          {formatCurrency(order.totalAmount)}
+        </span>
+        {/* Mobile-only label */}
+        <span className="sm:hidden text-xs font-bold text-black/40 uppercase ml-2">
+          Total
+        </span>
       </div>
-      <div className="w-1/4 flex justify-end">
+
+      {/* Action Button */}
+      <div className="w-full sm:w-1/3 flex justify-end">
         <button
-          className="bg-[#f9f906] text-black font-bold text-sm leading-normal tracking-wide px-6 py-2 rounded-md hover:brightness-110 transition-all"
+          className="
+            w-full sm:w-auto
+            rounded-full border-2 border-black bg-white px-6 py-2.5 
+            text-xs font-black text-black uppercase tracking-widest
+            hover:bg-black hover:text-white 
+            active:scale-95
+            transition-all duration-200
+          "
           onClick={() => setIsOpen(true)}
         >
-          RINCIAN
+          Rincian
         </button>
       </div>
+
       <OrderDetailsModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
