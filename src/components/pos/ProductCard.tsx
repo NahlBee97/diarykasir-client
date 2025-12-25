@@ -3,7 +3,7 @@ import type { Product } from "../../interfaces/productInterfaces";
 
 interface ProductCardProps {
   item: Product;
-  onClick: () => void;
+  onClick: (item: Product) => void;
   disabled?: boolean;
 }
 
@@ -13,7 +13,7 @@ const ProductCard = ({ item, onClick, disabled }: ProductCardProps) => {
   return (
     <button
       key={item.id}
-      onClick={disabled ? undefined : onClick}
+      onClick={disabled ? undefined : () => onClick(item)}
       disabled={disabled || isOutOfStock}
       className={`
         group relative flex flex-col aspect-square w-full overflow-hidden 
