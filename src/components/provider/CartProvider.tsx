@@ -10,6 +10,7 @@ import type { Product } from "../../interfaces/productInterfaces";
 import toast from "react-hot-toast";
 import { CartContext } from "../../context/CartContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../../hooks/useAuth";
 
 // Define the data type for updates
 interface UpdateItemData {
@@ -18,6 +19,7 @@ interface UpdateItemData {
 }
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+  const {user} = useAuth();
   const queryClient = useQueryClient();
 
   // 1. FETCH CART
@@ -27,8 +29,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["cart"],
+    queryKey: ["cart", user?.id],
     queryFn: getUserCart,
+    enabled: !!user, // Only run if user is logged in
   });
 
   // Derived state (calculated on the fly, no useState needed)
