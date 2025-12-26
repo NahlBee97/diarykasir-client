@@ -5,14 +5,32 @@ import LogoutButton from "../components/LogOutButton";
 import { useAuth } from "../hooks/useAuth";
 import ProductSection from "../components/pos/ProductSection";
 import ProductTab from "../components/pos/ProductTab";
+import toast from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import LoadingModal from "../components/LoadingModal";
 
 const categories = ["Ayam Geprek", "Minuman", "Tambahan"];
 
 const Pos = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(categories[0]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      return await logout();
+    },
+    onSuccess: () => {
+      toast.success("Logout berhasil!");
+      navigate("/");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message);
+    },
+  });
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-white text-black">
@@ -57,7 +75,7 @@ const Pos = () => {
             </div>
 
             <div>
-              <LogoutButton onClick={logout} />
+              <LogoutButton onClick={mutate} />
             </div>
           </div>
 
@@ -87,6 +105,7 @@ const Pos = () => {
           <CartSection />
         </div>
       </div>
+      <LoadingModal isOpen={isPending} message="Keluar..."/>
     </div>
   );
 };

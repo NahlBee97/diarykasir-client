@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const response = await api.post("/api/auth/login", { userId, role, pin });
       const { accessToken } = response.data;
-
+      
       localStorage.setItem("token", accessToken);
 
       const decodedUser = jwtDecode<User>(accessToken);
@@ -43,11 +43,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return false;
     }
   };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-    navigate("/");
+  
+  const logout = async () => {
+    try {
+      await api.post("/api/auth/logout");
+      localStorage.removeItem("token");
+      setUser(null);
+      navigate("/");
+      return true;
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

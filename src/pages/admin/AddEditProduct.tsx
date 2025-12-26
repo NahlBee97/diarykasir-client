@@ -18,6 +18,7 @@ import type {
 } from "../../interfaces/productInterfaces";
 import { useState, useEffect } from "react";
 import Loader from "../../components/Loader";
+import LoadingModal from "../../components/LoadingModal";
 
 const categories = ["Ayam Geprek", "Minuman", "Tambahan"];
 
@@ -49,7 +50,7 @@ const AddEditProduct = () => {
     }
   }, [mode, product?.image, previewUrl]);
 
-  const { mutate: addProduct, isPending: addPending } = useMutation({
+  const { mutate: addProduct, isPending: isAddPending } = useMutation({
     mutationFn: async (formData: FormData) => {
       return createProduct(formData);
     },
@@ -61,7 +62,7 @@ const AddEditProduct = () => {
     },
   });
 
-  const { mutate: editProduct, isPending: editPending } = useMutation({
+  const { mutate: editProduct, isPending: isEditPending } = useMutation({
     mutationFn: async (formData: FormData) => {
       return updateProduct(product!.id, formData);
     },
@@ -303,7 +304,7 @@ const AddEditProduct = () => {
                     transition-all duration-200
                   "
                   onClick={() => navigate("/admin/products")}
-                  disabled={addPending || editPending}
+                  disabled={isAddPending || isEditPending}
                 >
                   Batal
                 </button>
@@ -311,8 +312,8 @@ const AddEditProduct = () => {
                   type="submit"
                   disabled={
                     formik.isSubmitting ||
-                    addPending ||
-                    editPending ||
+                    isAddPending ||
+                    isEditPending ||
                     (mode === "add" && !file)
                   }
                   className="
@@ -332,6 +333,7 @@ const AddEditProduct = () => {
             </form>
           )}
         </div>
+        <LoadingModal isOpen={isEditPending || isAddPending} message={mode === "add" ? "Menambahkan produk..." : "Mengedit produk..."}/>
       </div>
     </main>
   );

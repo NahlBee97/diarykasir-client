@@ -6,6 +6,10 @@ import Loader from "../Loader";
 import StatusBadge from "./StatusBadge";
 import { deleteProduct } from "../../services/productServices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import ConfirmModal from "../ConfirmModal";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import LoadingModal from "../LoadingModal";
 
 interface props {
   products: Product[];
@@ -17,16 +21,19 @@ const ProductTable = ({ products, isLoading, isError }: props) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   const { mutate: deleteItem, isPending: deletePending } = useMutation({
     mutationFn: async (id: number) => {
       return deleteProduct(id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      alert("Delete Product Success");
+      toast.success("Berhasil menghapus produk");
     },
     onError: (error) => {
-      alert("Error: " + error);
+      console.error("Error deleting product:", error);
+      toast.error("Gagal menghapus produk");
     },
   });
 
@@ -35,11 +42,7 @@ const ProductTable = ({ products, isLoading, isError }: props) => {
     return (
       <div className="w-full bg-white">
         <div className="w-full min-h-80 flex flex-col gap-4 justify-center items-center">
-          {isError ? (
-            <WarningIcon />
-          ) : (
-            <Loader size="md" variant="dark" />
-          )}
+          {isError ? <WarningIcon /> : <Loader size="md" variant="dark" />}
           <p className="text-black font-bold uppercase tracking-wider">
             {isError ? "Gagal Memuat Data" : "Memuat Data Produk..."}
           </p>
@@ -117,9 +120,7 @@ const ProductTable = ({ products, isLoading, isError }: props) => {
               {product.stock}
             </td>
             <td className="p-4 text-center">
-              <StatusBadge
-                stock={product.stock}
-              />
+              <StatusBadge stock={product.stock} />
             </td>
             <td className="p-4">
               <div className="flex items-center justify-center gap-2">
@@ -147,11 +148,21 @@ const ProductTable = ({ products, isLoading, isError }: props) => {
                     transition-all duration-200
                   "
                   disabled={deletePending}
-                  onClick={() => deleteItem(product.id)}
+                  onClick={() => setIsModalOpen(true)}
                   title="Delete"
                 >
                   <DeleteIcon />
                 </button>
+                <ConfirmModal
+                  isOpen={isModalOpen}
+                  message="Apakah Anda yakin ingin menghapus produk ini?"
+                  onCancel={() => setIsModalOpen(false)}
+                  onConfirm={() => {
+                    deleteItem(product.id);
+                    setIsModalOpen(false);
+                  }}
+                />
+                <LoadingModal isOpen={deletePending} message="Menghapus produk..."/>
               </div>
             </td>
           </tr>
