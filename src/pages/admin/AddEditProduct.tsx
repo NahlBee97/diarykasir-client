@@ -19,6 +19,7 @@ import type {
 import { useState, useEffect } from "react";
 import Loader from "../../components/Loader";
 import LoadingModal from "../../components/LoadingModal";
+import { handleApiError } from "../../utils/errorHandler";
 
 const categories = ["Ayam Geprek", "Minuman", "Tambahan"];
 
@@ -58,7 +59,7 @@ const AddEditProduct = () => {
       navigate("/admin/products");
     },
     onError: (error) => {
-      alert("Error: " + error.message);
+      handleApiError(error);
     },
   });
 
@@ -70,7 +71,7 @@ const AddEditProduct = () => {
       navigate("/admin/products");
     },
     onError: (error) => {
-      alert("Error: " + error.message);
+      handleApiError(error);
     },
   });
 
@@ -86,8 +87,8 @@ const AddEditProduct = () => {
     enableReinitialize: true,
     initialValues: {
       name: product?.name || "",
-      price: product?.price || 0,
-      stock: product?.stock || 0,
+      price: product?.price || "",
+      stock: product?.stock || "",
       category: product?.category || categories[0],
     },
     validationSchema: mode === "edit" ? editProductSchema : productSchema,
@@ -123,7 +124,7 @@ const AddEditProduct = () => {
     "flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black py-2 focus:outline-0 border-2 border-black bg-white h-14 placeholder:text-black/30 px-4 text-base font-bold transition-all duration-200 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]";
   const labelClass =
     "text-black text-sm font-black uppercase tracking-wide pb-2";
-  const errorClass = "text-red-600 text-xs font-bold mt-1 uppercase";
+  const errorClass = "text-red-600 text-xs font-bold mt-1";
 
   return (
     // Main Container: Matches AdminLayout padding
@@ -247,7 +248,7 @@ const AddEditProduct = () => {
                   >
                     {/* Background Image Preview */}
                     <img
-                      src={finalPreviewUrl || ""}
+                      src={finalPreviewUrl}
                       alt="Preview"
                       className={`
                             absolute w-full h-full inset-0 bg-cover bg-center object-cover

@@ -8,6 +8,8 @@ import {
   ReceiptIcon,
   UserIcon,
 } from "../Icons";
+import { useMutation } from "@tanstack/react-query";
+import LoadingModal from "../LoadingModal";
 
 const navLinks = [
   { label: "Penjualan Hari Ini", link: "/admin", icon: <DashboardIcon /> },
@@ -28,6 +30,12 @@ const navLinks = [
 const Sidebar = () => {
   const { logout } = useAuth();
   const { pathname } = useLocation();
+
+  const { mutate: handleLogout, isPending } = useMutation({
+    mutationFn: async () => {
+      return await logout();
+    },
+  });
 
   // Helper to determine active state (handles sub-routes like /admin/products/add)
   const isActiveLink = (link: string) => {
@@ -86,7 +94,7 @@ const Sidebar = () => {
         {/* Logout Button */}
         <div className="border-t-2 border-black/10 pt-4">
           <button
-            onClick={() => logout()}
+            onClick={() => handleLogout()}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-black/70 hover:bg-red-50 hover:text-red-600 transition-colors duration-200 group"
           >
             <span className="group-hover:text-red-600 transition-colors">
@@ -98,6 +106,7 @@ const Sidebar = () => {
           </button>
         </div>
       </nav>
+      <LoadingModal isOpen={isPending} message="Keluar..." />
     </aside>
   );
 };
