@@ -8,7 +8,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingModal from "../components/LoadingModal";
 import { getAllUsers } from "../services/userServices";
 import type { User } from "../interfaces/authInterfaces";
-import toast from "react-hot-toast";
 
 const Login = () => {
   const { user, login } = useAuth();
@@ -17,7 +16,7 @@ const Login = () => {
   const [pin, setPin] = useState<string>("");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
-  const { data: users = [], isLoading: isLoadingUsers } = useQuery({
+  const { data: users = [], isLoading: isLoadingUsers, error: isError } = useQuery({
     queryKey: ["users"],
     queryFn: getAllUsers,
   });
@@ -42,28 +41,9 @@ const Login = () => {
     setPin((prev) => prev.slice(0, -1));
   };
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: handleLogin, isPending } = useMutation({
     mutationFn: async (pin: string) => {
-      if (pin.length !== 6) {
-        throw new Error("PIN harus terdiri dari 6 digit.");
-      }
-
-      const isSuccess = await login(selectedUserId!, "CASHIER", pin);
-
-      if (!isSuccess) {
-        throw new Error("PIN Salah! Silakan coba lagi.");
-      }
-
-      return isSuccess;
-    },
-
-    onSuccess: () => {
-      toast.success("Login berhasil!");
-      navigate("/pos");
-    },
-
-    onError: (error: Error) => {
-      toast.error(error.message);
+      return await login(selectedUserId!, pin);
     },
   });
 
@@ -79,7 +59,7 @@ const Login = () => {
       } else if (e.key === "Backspace") {
         handleBackspace();
       } else if (e.key === "Enter") {
-        mutate(pin);
+        handleLogin(pin);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -115,7 +95,7 @@ const Login = () => {
               <option value="" className="text-black">
                 {isLoadingUsers
                   ? "Memuat data kasir..."
-                  : "Pilih Petugas Kasir"}
+                  : isError ? "Tidak dapat memuat data kasir" : "Pilih Petugas Kasir"}
               </option>
               {users.map((user: User) => (
                 <option key={user.id} value={user.id}>
@@ -159,7 +139,7 @@ const Login = () => {
           {/* Login Button */}
           <div className="flex p-4 justify-center">
             <button
-              onClick={() => mutate(pin)}
+              onClick={() => handleLogin(pin)}
               className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-black text-white text-lg font-black leading-normal tracking-widest hover:bg-gray-800 transition-all duration-200 border-2 border-black"
             >
               <span className="truncate">LOGIN</span>
@@ -167,7 +147,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <LoadingModal isOpen={isPending} message="Memproses..." />
+      <LoadingModal isOpen={isPending} message="Masuk..." />
     </div>
   );
 };

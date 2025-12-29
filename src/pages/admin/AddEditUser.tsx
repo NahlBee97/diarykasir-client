@@ -10,6 +10,7 @@ import {
   updateUser,
 } from "../../services/userServices";
 import { editUserSchema, userSchema } from "../../schemas/userSchema";
+import LoadingModal from "../../components/LoadingModal";
 
 const shifts = ["Siang", "Malam"];
 
@@ -31,7 +32,7 @@ const AddEditUser = () => {
     enabled: mode === "edit" && !!id,
   });
 
-  const { mutate: addUser, isPending: addPending } = useMutation({
+  const { mutate: addUser, isPending: isAddPending } = useMutation({
     mutationFn: async (data: NewUser) => {
       return createUser(data);
     },
@@ -43,7 +44,7 @@ const AddEditUser = () => {
     },
   });
 
-  const { mutate: editUser, isPending: editPending } = useMutation({
+  const { mutate: editUser, isPending: isEditPending } = useMutation({
     mutationFn: async (data: UpdateUser) => {
       return updateUser(user!.id, data);
     },
@@ -191,13 +192,13 @@ const AddEditUser = () => {
                     transition-all duration-200
                   "
                   onClick={() => navigate("/admin/users")}
-                  disabled={addPending || editPending}
+                  disabled={isAddPending || isEditPending}
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  disabled={formik.isSubmitting || addPending || editPending}
+                  disabled={formik.isSubmitting || isAddPending || isEditPending}
                   className="
                     flex h-12 min-w-32 cursor-pointer items-center justify-center 
                     rounded-lg bg-black px-6 py-2 
@@ -215,6 +216,7 @@ const AddEditUser = () => {
             </form>
           )}
         </div>
+        <LoadingModal isOpen={isEditPending || isAddPending} message={mode === "add" ? "Menambahkan kasir..." : "Mengedit kasir..."}/>
       </div>
     </main>
   );

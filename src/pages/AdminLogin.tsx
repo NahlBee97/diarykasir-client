@@ -6,7 +6,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import LoadingModal from "../components/LoadingModal";
-import toast from "react-hot-toast";
+import { adminId } from "../config";
 
 const AdminLogin = () => {
   const { user, login } = useAuth();
@@ -34,29 +34,9 @@ const AdminLogin = () => {
     setPin((prev) => prev.slice(0, -1));
   };
 
-  const { mutate, isPending } = useMutation({
+  const { mutate: handleLogin, isPending } = useMutation({
     mutationFn: async (pin: string) => {
-      if (pin.length !== 6) {
-        throw new Error("PIN harus terdiri dari 6 digit.");
-      }
-
-      // Hardcoded Admin ID as per your snippet
-      const isSuccess = await login(26, "ADMIN", pin);
-
-      if (!isSuccess) {
-        throw new Error("PIN Salah! Silakan coba lagi.");
-      }
-
-      return isSuccess;
-    },
-
-    onSuccess: () => {
-      toast.success("Login berhasil!");
-      navigate("/admin");
-    },
-
-    onError: (error: Error) => {
-      toast.error(error.message);
+      return await login(Number(adminId), pin);
     },
   });
 
@@ -68,7 +48,7 @@ const AdminLogin = () => {
       } else if (e.key === "Backspace") {
         handleBackspace();
       } else if (e.key === "Enter") {
-        mutate(pin);
+        handleLogin(pin);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -129,7 +109,7 @@ const AdminLogin = () => {
           {/* Login Button */}
           <div className="flex p-4 justify-center">
             <button
-              onClick={() => mutate(pin)}
+              onClick={() => handleLogin(pin)}
               disabled={isPending}
               className="
                 flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center 
@@ -148,7 +128,7 @@ const AdminLogin = () => {
           </div>
         </div>
       </div>
-      <LoadingModal isOpen={isPending} message="Memproses..." />
+      <LoadingModal isOpen={isPending} message="Masuk..." />
     </div>
   );
 };

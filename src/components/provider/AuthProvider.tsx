@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../lib/axios";
 import { jwtDecode } from "jwt-decode";
 import type { User } from "../../interfaces/authInterfaces";
+import { handleApiError } from "../../utils/errorHandler";
+import toast from "react-hot-toast";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -26,9 +28,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   });
 
-  const login = async (userId: number, role: string, pin: string) => {
+  const login = async (userId: number, pin: string) => {
     try {
-      const response = await api.post("/api/auth/login", { userId, role, pin });
+      if (!userId) {
+        throw new Error("Pilih kasir terlebih dahulu.");
+      }
+
+      if (pin.length !== 6) {
+        throw new Error("PIN harus terdiri dari 6 digit.");
+      }
+
+      const response = await api.post("/api/auth/login", { userId, pin });
       const { accessToken } = response.data;
 
       localStorage.setItem("token", accessToken);
@@ -36,18 +46,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const decodedUser = jwtDecode<User>(accessToken);
       setUser(decodedUser);
 
-      navigate("/pos");
+      toast.success("Login berhasil!");
+
       return true;
     } catch (error) {
-      console.error("Login failed:", error);
+      handleApiError(error);
       return false;
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setUser(null);
-    navigate("/");
+  const logout = async () => {
+    try {
+      await api.post("/api/auth/logout");
+      localStorage.removeItem("token");
+      setUser(null);
+      toast.success("Logout berhasil!");
+      navigate("/");
+      return true;
+    } catch (error) {
+      handleApiError(error);
+      return false;
+    }
   };
 
   return (

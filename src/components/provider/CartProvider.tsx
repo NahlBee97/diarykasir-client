@@ -16,6 +16,7 @@ import type { Product } from "../../interfaces/productInterfaces";
 import toast from "react-hot-toast";
 import { CartContext } from "../../context/CartContext";
 import { useAuth } from "../../hooks/useAuth";
+import { handleApiError } from "../../utils/errorHandler";
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -102,10 +103,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         // Refresh to ensure IDs and data are synced with server
         const updatedCart = await getUserCart();
         setCartData(updatedCart);
+        return true;
       } catch (error) {
-        console.error("Add failed", error);
-        toast.error("Gagal menyimpan");
+        handleApiError(error);
         setCartData(prevCart);
+        return false;
       }
     },
     [cartData]
@@ -129,10 +131,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         await updateItemQuantity(itemId, quantity);
+        return true;
       } catch (error) {
-        console.error("Update failed", error);
-        toast.error("Gagal update");
+        handleApiError(error);
         setCartData(prevCart);
+        return false;
       }
     },
     [cartData]
@@ -154,10 +157,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       try {
         await removeItemFromCart(itemId);
         toast.success("Item dihapus");
+        return true;
       } catch (error) {
         console.error("Remove failed", error);
         toast.error("Gagal menghapus");
         setCartData(prevCart);
+        return false;
       }
     },
     [cartData]

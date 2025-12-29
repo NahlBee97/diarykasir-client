@@ -5,6 +5,8 @@ import LogoutButton from "../components/LogOutButton";
 import { useAuth } from "../hooks/useAuth";
 import ProductSection from "../components/pos/ProductSection";
 import ProductTab from "../components/pos/ProductTab";
+import { useMutation } from "@tanstack/react-query";
+import LoadingModal from "../components/LoadingModal";
 
 const categories = ["Ayam Geprek", "Minuman", "Tambahan"];
 
@@ -13,6 +15,12 @@ const Pos = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState(categories[0]);
+
+  const { mutate: handleLogout, isPending } = useMutation({
+    mutationFn: async () => {
+      return await logout();
+    },
+  });
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-white text-black">
@@ -57,7 +65,7 @@ const Pos = () => {
             </div>
 
             <div>
-              <LogoutButton onClick={logout} />
+              <LogoutButton onClick={handleLogout} />
             </div>
           </div>
 
@@ -87,6 +95,7 @@ const Pos = () => {
           <CartSection />
         </div>
       </div>
+      <LoadingModal isOpen={isPending} message="Keluar..."/>
     </div>
   );
 };

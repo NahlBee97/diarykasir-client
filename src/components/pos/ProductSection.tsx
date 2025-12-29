@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getProducts } from "../../services/productServices";
 import { useMemo } from "react";
 import Loader from "../Loader";
@@ -27,6 +27,18 @@ const ProductSection = ({
     queryFn: () => getProducts(1),
   });
 
+  const {mutate: handleAdd, isPending: isAddPending} = useMutation({
+    mutationFn: async (product: Product) => {
+      return await addToCart(product);
+    }
+  });
+
+  const {mutate: handleUpdate, isPending: isUpdatePending} = useMutation({
+    mutationFn: async (data: {itemId: number, quantity: number}) => {
+      return await updateItem(data.itemId, data.quantity);
+    }
+  });
+
   const products: Product[] = useMemo(
     () => queryResult?.products || [],
     [queryResult]
@@ -48,14 +60,11 @@ const ProductSection = ({
   }, [products, searchQuery, activeCategory]);
 
   const handleProductClick = (product: Product) => {
-    const existItme = cartItems.find((item) => item.product.id === product.id);
-    if (existItme) {
-      updateItem(
-        existItme.id,
-        existItme.quantity + 1
-      );
+    const existItem = cartItems.find((item) => item.product.id === product.id);
+    if (existItem) {
+      handleUpdate({itemId: existItem.id, quantity: existItem.quantity + 1});
     } else {
-      addToCart(product);
+      handleAdd(product);
     }
   };
 
@@ -92,7 +101,7 @@ const ProductSection = ({
         <ProductCard
           key={item.id}
           item={item}
-          disabled={isLoading}
+          disabled={isLoading || isUpdatePending || isAddPending}
           onClick={handleProductClick}
         />
       ))}
