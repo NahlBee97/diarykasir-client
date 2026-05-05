@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import { BackspaceIcon } from "../components/Icons";
-import { PinDot } from "../components/login/PinDot";
-import { KeypadButton } from "../components/login/KeyPad";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -13,8 +10,8 @@ const Login = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  const [pin, setPin] = useState<string>("");
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(1);
+  const [password, setPassword] = useState("");
 
   const { data: users = [], isLoading: isLoadingUsers, error: isError } = useQuery({
     queryKey: ["users"],
@@ -31,19 +28,9 @@ const Login = () => {
     }
   }, [user, navigate]);
 
-  const handleNumClick = (num: string) => {
-    if (pin.length < 6) {
-      setPin((prev) => prev + num);
-    }
-  };
-
-  const handleBackspace = () => {
-    setPin((prev) => prev.slice(0, -1));
-  };
-
   const { mutate: handleLogin, isPending } = useMutation({
-    mutationFn: async (pin: string) => {
-      return await login(selectedUserId!, pin);
+    mutationFn: async (password: string) => {
+      return await login(selectedUserId!, password);
     },
   });
 
@@ -51,21 +38,6 @@ const Login = () => {
     const selectedUserId = Number(e.target.value);
     setSelectedUserId(selectedUserId);
   };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key >= "0" && e.key <= "9") {
-        handleNumClick(e.key);
-      } else if (e.key === "Backspace") {
-        handleBackspace();
-      } else if (e.key === "Enter") {
-        handleLogin(pin);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-    //eslint-disable-next-line
-  }, [pin]);
 
   return (
     <div className="layout-container flex h-full grow flex-col bg-white text-black">
@@ -87,59 +59,44 @@ const Login = () => {
 
           {/* Cashier Selection */}
           <div className="flex flex-col justify-center items-center gap-2 mb-2">
+            <label htmlFor="cashier-select" className="self-start text-lg font-bold">
+              Masuk sebagai:
+            </label>
             <select
               id="cashier-select"
               className="mb-4 p-3 border-2 border-black rounded-lg w-full bg-white text-black font-medium focus:outline-none"
               onChange={handleUserChange}
             >
-              <option value="" className="text-black">
-                {isLoadingUsers
-                  ? "Memuat data kasir..."
-                  : isError ? "Tidak dapat memuat data kasir" : "Pilih Petugas Kasir"}
-              </option>
-              {users.map((user: User) => (
+              {isLoadingUsers ? (
+                <option>Memuat...</option>
+              ) : isError ? (
+                <option>Gagal memuat pengguna</option>
+              ) : (
+              users.map((user: User) => (
                 <option key={user.id} value={user.id}>
                   {user.name}
                 </option>
-              ))}
+              )))}
             </select>
           </div>
 
-          {/* Prompt */}
-          <h3 className="text-center text-lg font-bold uppercase tracking-wide">
-            Masukkan PIN
-          </h3>
-
-          {/* PIN Input Display */}
-          <div className="flex justify-center p-6">
-            <div className="relative flex gap-4">
-              {[...Array(6)].map((_, i) => (
-                <PinDot key={i} filled={i < pin.length} />
-              ))}
-            </div>
-          </div>
-
-          {/* Numeric Keypad */}
-          <div className="grid grid-cols-3 gap-3 px-4 py-3">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-              <KeypadButton
-                key={num}
-                onClick={() => handleNumClick(num.toString())}
-              >
-                {num}
-              </KeypadButton>
-            ))}
-            <div className="flex items-center justify-center p-4 h-16 rounded-lg"></div>
-            <KeypadButton onClick={() => handleNumClick("0")}>0</KeypadButton>
-            <KeypadButton onClick={handleBackspace}>
-              <BackspaceIcon className="w-8 h-8 text-black" />
-            </KeypadButton>
+          {/* password input */}
+          <div className="flex flex-col justify-center items-center gap-2 mb-2">
+            <label htmlFor="cashier-select" className="self-start text-lg font-bold">
+              Masukkan password:
+            </label>
+            <input
+              type="password"
+              className="mb-4 p-3 border-2 border-black rounded-lg w-full bg-white text-black font-medium focus:outline-none"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           {/* Login Button */}
           <div className="flex p-4 justify-center">
             <button
-              onClick={() => handleLogin(pin)}
+              onClick={() => handleLogin(password)}
               className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-black text-white text-lg font-black leading-normal tracking-widest hover:bg-gray-800 transition-all duration-200 border-2 border-black"
             >
               <span className="truncate">LOGIN</span>

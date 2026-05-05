@@ -14,7 +14,6 @@ import Products from "./pages/admin/Products";
 import AddEditProduct from "./pages/admin/AddEditProduct";
 import Sales from "./pages/admin/Sales";
 import Report from "./pages/admin/Report";
-import AdminLogin from "./pages/AdminLogin";
 import Users from "./pages/admin/Users";
 import { CartProvider } from "./components/provider/CartProvider";
 import AddUser from "./pages/admin/AddUser";
@@ -33,7 +32,6 @@ const App = () => {
             <Routes>
               <Route element={<CashierLayout />}>
                 <Route path="/" element={<Login />} />
-                <Route path="/login" element={<AdminLogin />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="/pos" element={<Pos />} />
                 </Route>
