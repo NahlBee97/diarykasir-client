@@ -28,7 +28,7 @@ const AddUser = () => {
     enableReinitialize: true,
     initialValues: {
       name: "",
-      pin: "",
+      password: "",
       shift: shifts[0],
     },
     validationSchema: userSchema,
@@ -56,7 +56,7 @@ const AddUser = () => {
           {/* Header */}
           <div className="mb-8 border-b-2 border-black pb-6">
             <h1 className="text-black text-4xl font-black leading-tight tracking-tighter uppercase">
-              Tambah Petugas
+              Tambah Petugas Kasir
             </h1>
           </div>
 
@@ -64,7 +64,7 @@ const AddUser = () => {
             <div className="flex flex-col gap-6">
               {/* Name Input */}
               <label className="flex flex-col w-full">
-                <p className={labelClass}>Nama Petugas</p>
+                <p className={labelClass}>Nama</p>
                 <input
                   name="name"
                   className={inputClass}
@@ -79,21 +79,20 @@ const AddUser = () => {
               </label>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* PIN Input */}
+                {/* Password Input */}
                 <label className="flex flex-col w-full">
-                  <p className={labelClass}>PIN Akses</p>
+                  <p className={labelClass}>Password</p>
                   <input
-                    name="pin"
-                    type="password" // Hidden for security, or text if you prefer visibility
-                    maxLength={6} // Assuming 6 digit pin
+                    name="password"
+                    type="password" 
                     className={inputClass}
                     placeholder="******"
-                    value={formik.values.pin}
+                    value={formik.values.password}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
-                  {formik.touched.pin && formik.errors.pin && (
-                    <p className={errorClass}>{formik.errors.pin}</p>
+                  {formik.touched.password && formik.errors.password && (
+                    <p className={errorClass}>{formik.errors.password}</p>
                   )}
                 </label>
 

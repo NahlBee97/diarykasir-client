@@ -5,15 +5,21 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingModal from "../components/LoadingModal";
 import { getAllUsers } from "../services/userServices";
 import type { User } from "../interfaces/authInterfaces";
+import { EyeClosedIcon, EyeOpenIcon } from "../components/Icons";
 
 const Login = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
   const [selectedUserId, setSelectedUserId] = useState<number | null>(1);
+  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
 
-  const { data: users = [], isLoading: isLoadingUsers, error: isError } = useQuery({
+  const {
+    data: users = [],
+    isLoading: isLoadingUsers,
+    error: isError,
+  } = useQuery({
     queryKey: ["users"],
     queryFn: getAllUsers,
   });
@@ -59,7 +65,10 @@ const Login = () => {
 
           {/* Cashier Selection */}
           <div className="flex flex-col justify-center items-center gap-2 mb-2">
-            <label htmlFor="cashier-select" className="self-start text-lg font-bold">
+            <label
+              htmlFor="cashier-select"
+              className="self-start text-lg font-bold"
+            >
               Masuk sebagai:
             </label>
             <select
@@ -72,25 +81,42 @@ const Login = () => {
               ) : isError ? (
                 <option>Gagal memuat pengguna</option>
               ) : (
-              users.map((user: User) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              )))}
+                users.map((user: User) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
           {/* password input */}
           <div className="flex flex-col justify-center items-center gap-2 mb-2">
-            <label htmlFor="cashier-select" className="self-start text-lg font-bold">
+            <label
+              htmlFor="cashier-select"
+              className="self-start text-lg font-bold"
+            >
               Masukkan password:
             </label>
-            <input
-              type="password"
-              className="mb-4 p-3 border-2 border-black rounded-lg w-full bg-white text-black font-medium focus:outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative w-full">
+              <input
+                name="password"
+                // 3. Toggle type based on state
+                type={showPassword ? "text" : "password"}
+                className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black py-2 focus:outline-0 border-2 border-black bg-white h-14 placeholder:text-black/30 px-4 pr-12 text-base font-bold transition-all duration-200 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                placeholder="******"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+
+              {/* 4. Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-black/60 hover:text-black transition-colors"
+              >
+                {showPassword ? <EyeOpenIcon /> : <EyeClosedIcon />}
+              </button>
+            </div>
           </div>
 
           {/* Login Button */}

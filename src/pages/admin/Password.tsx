@@ -2,21 +2,21 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import type { SetPin } from "../../interfaces/userInterfaces";
+import type { SetPassword } from "../../interfaces/userInterfaces";
 import { updateUser } from "../../services/userServices";
-import { setPinSchema } from "../../schemas/userSchema";
+import { setPasswordSchema } from "../../schemas/userSchema";
 import LoadingModal from "../../components/LoadingModal";
 import { EyeClosedIcon, EyeOpenIcon } from "../../components/Icons";
 
-const Pin = () => {
+const Password = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [showPin, setShowPin] = useState(false);
-  const [showConfirmPin, setShowConfirmPin] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { mutate: editUser, isPending: isEditPending } = useMutation({
-    mutationFn: async (data: SetPin) => {
+    mutationFn: async (data: SetPassword) => {
       return updateUser(Number(id), data);
     },
     onSuccess: () => {
@@ -27,15 +27,15 @@ const Pin = () => {
     },
   });
 
-  const formik = useFormik<SetPin>({
+  const formik = useFormik<SetPassword>({
     enableReinitialize: true,
     initialValues: {
-      pin: "",
-      confirmPin: "",
+      password: "",
+      confirmPassword: "",
     },
-    validationSchema: setPinSchema,
+    validationSchema: setPasswordSchema,
     onSubmit: async (values) => {
-      editUser(values as SetPin);
+      editUser(values as SetPassword);
     },
   });
 
@@ -59,25 +59,25 @@ const Pin = () => {
           {/* Header */}
           <div className="mb-8 border-b-2 border-black pb-6">
             <h1 className="text-black text-4xl font-black leading-tight tracking-tighter uppercase">
-              Ganti Pin Akses
+              Ganti Password
             </h1>
           </div>
 
           <form onSubmit={formik.handleSubmit}>
             <div className="flex flex-col gap-6">
-              {/* New PIN */}
+              {/* New Password */}
               <label className="flex flex-col w-full relative">
-                <p className={labelClass}>PIN Baru</p>
+                <p className={labelClass}>Password Baru</p>
 
                 {/* Wrapper div for positioning the icon */}
                 <div className="relative w-full">
                   <input
-                    name="pin"
+                    name="password"
                     // 3. Toggle type based on state
-                    type={showPin ? "text" : "password"}
+                    type={showPassword ? "text" : "password"}
                     className={inputClass}
                     placeholder="******"
-                    value={formik.values.pin}
+                    value={formik.values.password}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
@@ -85,31 +85,31 @@ const Pin = () => {
                   {/* 4. Toggle Button */}
                   <button
                     type="button"
-                    onClick={() => setShowPin(!showPin)}
+                    onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-black/60 hover:text-black transition-colors"
                   >
-                    {showPin ? <EyeOpenIcon /> : <EyeClosedIcon />}
+                    {showPassword ? <EyeOpenIcon /> : <EyeClosedIcon />}
                   </button>
                 </div>
 
-                {formik.touched.pin && formik.errors.pin && (
-                  <p className={errorClass}>{formik.errors.pin}</p>
+                {formik.touched.password && formik.errors.password && (
+                  <p className={errorClass}>{formik.errors.password}</p>
                 )}
               </label>
 
-              {/* Confirm PIN */}
+              {/* Confirm Password */}
               <label className="flex flex-col w-full">
-                <p className={labelClass}>Konfirmasi PIN Baru</p>
+                <p className={labelClass}>Konfirmasi Password Baru</p>
 
                 {/* Wrapper div for positioning the icon */}
                 <div className="relative w-full">
                   <input
-                    name="confirmPin"
+                    name="confirmPassword"
                     // 5. Toggle type based on state
-                    type={showConfirmPin ? "text" : "password"}
+                    type={showConfirmPassword ? "text" : "password"}
                     className={inputClass}
                     placeholder="******"
-                    value={formik.values.confirmPin}
+                    value={formik.values.confirmPassword}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
@@ -117,15 +117,15 @@ const Pin = () => {
                   {/* 6. Toggle Button */}
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPin(!showConfirmPin)}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-black/60 hover:text-black transition-colors"
                   >
-                    {showConfirmPin ? <EyeOpenIcon /> : <EyeClosedIcon />}
+                    {showConfirmPassword ? <EyeOpenIcon /> : <EyeClosedIcon />}
                   </button>
                 </div>
 
-                {formik.touched.confirmPin && formik.errors.confirmPin && (
-                  <p className={errorClass}>{formik.errors.confirmPin}</p>
+                {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+                  <p className={errorClass}>{formik.errors.confirmPassword}</p>
                 )}
               </label>
             </div>
@@ -166,10 +166,10 @@ const Pin = () => {
             </div>
           </form>
         </div>
-        <LoadingModal isOpen={isEditPending} message="Menganti PIN Akses..." />
+        <LoadingModal isOpen={isEditPending} message="Menganti Password Akses..." />
       </div>
     </main>
   );
 };
 
-export default Pin;
+export default Password;

@@ -18,7 +18,7 @@ import Users from "./pages/admin/Users";
 import { CartProvider } from "./components/provider/CartProvider";
 import AddUser from "./pages/admin/AddUser";
 import EditUser from "./pages/admin/EditUser";
-import Pin from "./pages/admin/Pin";
+import Password from "./pages/admin/Password";
 
 const queryClient = new QueryClient();
 
@@ -58,8 +58,8 @@ const App = () => {
                     element={<EditUser />}
                   />
                   <Route
-                    path="/admin/users/pin/:id"
-                    element={<Pin />}
+                    path="/admin/users/password/:id"
+                    element={<Password />}
                   />
                 </Route>
               </Route>

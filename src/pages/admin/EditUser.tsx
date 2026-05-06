@@ -142,9 +142,9 @@ const EditUser = () => {
                     hover:bg-black hover:text-white 
                     transition-all duration-200
                   "
-                  onClick={() => navigate(`/admin/users/pin/${id}`)}
+                  onClick={() => navigate(`/admin/users/password/${id}`)}
                 >
-                  Ganti PIN Akses?
+                  Ganti password?
                 </button>
               </div>
 
