@@ -81,12 +81,13 @@ const Login = () => {
               ) : isError ? (
                 <option>Gagal memuat pengguna</option>
               ) : (
-                users.map((user: User) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))
+                <option value="1">Admin</option>
               )}
+              {users.map((user: User) => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))} 
             </select>
           </div>
 

@@ -1,9 +1,12 @@
-import type { NewUser, SetPin, UpdateUser } from "../interfaces/userInterfaces";
+import type { User } from "../interfaces/authInterfaces";
+import type { NewUser, SetPassword, UpdateUser } from "../interfaces/userInterfaces";
 import api from "../lib/axios";
 
 export async function getAllUsers() {
   const response = await api.get("/api/users");
-  return response.data.users;
+  const users = response.data.users;
+  const cashiers = users.filter((user: User) => user.role === "CASHIER");
+  return cashiers;
 }
 
 export async function getUserById(userId: number) {
@@ -16,7 +19,7 @@ export async function createUser(userData: NewUser) {
   return response.data.user;
 }
 
-export async function updateUser(userId: number, updateData: UpdateUser | SetPin) {
+export async function updateUser(userId: number, updateData: UpdateUser | SetPassword) {
   const response = await api.put(`/api/users/${userId}`, updateData);
   return response.data.user;
 }

@@ -21,8 +21,6 @@ const Dashboard = () => {
     queryFn: getAllUsers,
   });
 
-  const cashiers = users.filter((user: User) => user.role === "CASHIER");
-
   const {
     data: todayOrders = [],
     isLoading: isOrderLoading,
@@ -79,9 +77,9 @@ const Dashboard = () => {
                 <option value="">
                   {isLoadingUsers ? "Memuat..." : "SEMUA PETUGAS"}
                 </option>
-                {cashiers.map((cashier: User) => (
-                  <option key={cashier.id} value={cashier.id}>
-                    {cashier.name}
+                {users.map((user: User) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
                   </option>
                 ))}
               </select>
