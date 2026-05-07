@@ -46,9 +46,14 @@ const Login = () => {
   };
 
   return (
-    <div className="layout-container flex h-full grow flex-col bg-white text-black">
-      <div className="flex flex-1 justify-center items-center py-10 px-4 sm:px-6 lg:px-8">
-        <div className="layout-content-container flex flex-col max-w-sm w-full mx-auto">
+      <div className="h-screen flex flex-col justify-center">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin(password);
+          }}
+          className="flex flex-col max-w-lg w-full mx-auto rounded-lg bg-slate-100 p-8 shadow-xl"
+        >
           {/* Logo Section */}
           <div className="flex justify-center mb-6">
             <img
@@ -121,18 +126,17 @@ const Login = () => {
           </div>
 
           {/* Login Button */}
-          <div className="flex p-4 justify-center">
+          <div className="flex justify-center mt-4">
             <button
-              onClick={() => handleLogin(password)}
+              type="submit"
               className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-black text-white text-lg font-black leading-normal tracking-widest hover:bg-gray-800 transition-all duration-200 border-2 border-black"
             >
               <span className="truncate">LOGIN</span>
             </button>
           </div>
-        </div>
+        </form>
+        <LoadingModal isOpen={isPending} message="Masuk..." />
       </div>
-      <LoadingModal isOpen={isPending} message="Masuk..." />
-    </div>
   );
 };
 
