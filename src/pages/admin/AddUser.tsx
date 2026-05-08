@@ -6,6 +6,8 @@ import type { NewUser } from "../../interfaces/userInterfaces";
 import { createUser } from "../../services/userServices";
 import { userSchema } from "../../schemas/userSchema";
 import LoadingModal from "../../components/LoadingModal";
+import { handleApiError } from "../../utils/errorHandler";
+import { toast } from "react-hot-toast";
 
 const shifts = ["Siang", "Malam"];
 
@@ -18,9 +20,10 @@ const AddUser = () => {
     },
     onSuccess: () => {
       navigate("/admin/users");
+      toast.success("Berhasil menambahkan user");
     },
     onError: (error) => {
-      alert("Error: " + error.message);
+      handleApiError(error);
     },
   });
 

@@ -7,6 +7,8 @@ import { updateUser } from "../../services/userServices";
 import { setPasswordSchema } from "../../schemas/userSchema";
 import LoadingModal from "../../components/LoadingModal";
 import { EyeClosedIcon, EyeOpenIcon } from "../../components/Icons";
+import { toast } from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 
 const Password = () => {
   const navigate = useNavigate();
@@ -21,9 +23,10 @@ const Password = () => {
     },
     onSuccess: () => {
       navigate("/admin/users");
+      toast.success("Berhasil mengupdate password");
     },
     onError: (error) => {
-      alert("Error: " + error.message);
+      handleApiError(error);
     },
   });
 

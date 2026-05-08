@@ -12,6 +12,8 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User } from "../../interfaces/authInterfaces";
 import { deleteUser, getAllUsers } from "../../services/userServices";
+import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 
 const Users = () => {
   const navigate = useNavigate();
@@ -34,10 +36,10 @@ const Users = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      alert("Delete User Success");
+      toast.success("Berhasil menghapus user");
     },
     onError: (error) => {
-      alert("Error: " + error);
+      handleApiError(error);
     },
   });
 
