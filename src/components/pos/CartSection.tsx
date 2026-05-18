@@ -64,7 +64,7 @@ const CartSection = () => {
     },
   });
 
-  const handleConfirmPayment = (cashReceived: number, change: number) => {
+  const handleConfirmPayment = (customerName: string, cashReceived: number, change: number) => {
     if (!cart?.userId) {
       toast.error("Data User tidak valid. Silakan refresh.");
       return;
@@ -73,6 +73,7 @@ const CartSection = () => {
     const orderData: NewOrder = {
       userId: cart.userId,
       totalAmount: totalAmount,
+      customerName,
       paymentCash: cashReceived,
       paymentChange: change,
     };

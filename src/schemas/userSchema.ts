@@ -2,10 +2,9 @@ import * as Yup from "yup";
 
 export const userSchema = Yup.object().shape({
   name: Yup.string().required("Nama pengguna wajib diisi"),
-  pin: Yup.string()
-    .matches(/^[0-9]+$/, "PIN harus berupa angka") // Ensures only numbers
-    .length(6, "PIN harus 6 angka") // Ensures exactly 6 digits
-    .required("PIN wajib diisi"),
+  password: Yup.string()
+    .min(8, "password harus lebih dari 8 huruf") // Ensures at least 8 characters
+    .required("password wajib diisi"),
   shift: Yup.string().required("Shift wajib diisi"),
 });
 
@@ -14,12 +13,11 @@ export const editUserSchema = Yup.object().shape({
   shift: Yup.string().optional(),
 });
 
-export const setPinSchema = Yup.object().shape({
-  pin: Yup.string()
-    .matches(/^[0-9]+$/, "PIN harus berupa angka")
-    .length(6, "PIN harus 6 angka")
-    .required("PIN Baru wajib diisi"), // Changed from optional to required
-  confirmPin: Yup.string()
-    .required("Konfirmasi PIN wajib diisi")
-    .oneOf([Yup.ref("pin")], "PIN tidak cocok"),
+export const setPasswordSchema = Yup.object().shape({
+  password: Yup.string()
+    .min(8, "password harus lebih dari 8 huruf")
+    .required("password Baru wajib diisi"), // Changed from optional to required
+  confirmPassword: Yup.string()
+    .required("Konfirmasi password wajib diisi")
+    .oneOf([Yup.ref("password")], "password tidak cocok"),
 });

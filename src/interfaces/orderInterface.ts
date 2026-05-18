@@ -5,6 +5,7 @@ export type OrderStatus = "COMPLETED" | "VOID";
 export interface Order {
   id: number;
   userId: number;
+  customerName: string;
   totalAmount: number;
   paymentCash: number;
   paymentChange: number;
@@ -24,6 +25,7 @@ export interface OrderItem {
 
 export interface NewOrder {
   userId: number;
+  customerName: string;
   totalAmount: number;
   paymentCash: number;
   paymentChange: number;

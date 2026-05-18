@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale"; // Import Indonesian locale if needed
 
 const SaleCard = ({ order }: { order: Order }) => {
+  console.log(order);  
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
@@ -21,6 +22,9 @@ const SaleCard = ({ order }: { order: Order }) => {
       <div className="flex flex-col gap-1 w-full sm:w-1/3">
         <span className="text-black font-black text-lg tracking-tight">
           #{order.id}
+        </span>
+        <span className="text-black/60 font-bold text-xs tracking-wide">
+          {order.customerName === "no name" ? "Umum" : order.customerName}
         </span>
         <span className="text-black/60 font-bold text-xs uppercase tracking-wide">
           {format(order.createdAt, "dd MMM yyyy • HH:mm", { locale: id })}

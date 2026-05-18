@@ -1,22 +1,25 @@
 import { useState, useEffect } from "react";
-import { BackspaceIcon } from "../components/Icons";
-import { PinDot } from "../components/login/PinDot";
-import { KeypadButton } from "../components/login/KeyPad";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingModal from "../components/LoadingModal";
 import { getAllUsers } from "../services/userServices";
 import type { User } from "../interfaces/authInterfaces";
+import { EyeClosedIcon, EyeOpenIcon } from "../components/Icons";
 
 const Login = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  const [pin, setPin] = useState<string>("");
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
 
-  const { data: users = [], isLoading: isLoadingUsers, error: isError } = useQuery({
+  const {
+    data: users = [],
+    isLoading: isLoadingUsers,
+    error: isError,
+  } = useQuery({
     queryKey: ["users"],
     queryFn: getAllUsers,
   });
@@ -31,19 +34,9 @@ const Login = () => {
     }
   }, [user, navigate]);
 
-  const handleNumClick = (num: string) => {
-    if (pin.length < 6) {
-      setPin((prev) => prev + num);
-    }
-  };
-
-  const handleBackspace = () => {
-    setPin((prev) => prev.slice(0, -1));
-  };
-
   const { mutate: handleLogin, isPending } = useMutation({
-    mutationFn: async (pin: string) => {
-      return await login(selectedUserId!, pin);
+    mutationFn: async (password: string) => {
+      return await login(selectedUserId!, password);
     },
   });
 
@@ -52,25 +45,15 @@ const Login = () => {
     setSelectedUserId(selectedUserId);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key >= "0" && e.key <= "9") {
-        handleNumClick(e.key);
-      } else if (e.key === "Backspace") {
-        handleBackspace();
-      } else if (e.key === "Enter") {
-        handleLogin(pin);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-    //eslint-disable-next-line
-  }, [pin]);
-
   return (
-    <div className="layout-container flex h-full grow flex-col bg-white text-black">
-      <div className="flex flex-1 justify-center items-center py-10 px-4 sm:px-6 lg:px-8">
-        <div className="layout-content-container flex flex-col max-w-sm w-full mx-auto">
+      <div className="h-screen flex flex-col justify-center">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin(password);
+          }}
+          className="flex flex-col max-w-lg w-full mx-auto rounded-lg bg-slate-100 p-8 shadow-xl"
+        >
           {/* Logo Section */}
           <div className="flex justify-center mb-6">
             <img
@@ -87,68 +70,73 @@ const Login = () => {
 
           {/* Cashier Selection */}
           <div className="flex flex-col justify-center items-center gap-2 mb-2">
+            <label
+              htmlFor="cashier-select"
+              className="self-start text-lg font-bold"
+            >
+              Masuk sebagai:
+            </label>
             <select
               id="cashier-select"
               className="mb-4 p-3 border-2 border-black rounded-lg w-full bg-white text-black font-medium focus:outline-none"
               onChange={handleUserChange}
             >
-              <option value="" className="text-black">
-                {isLoadingUsers
-                  ? "Memuat data kasir..."
-                  : isError ? "Tidak dapat memuat data kasir" : "Pilih Petugas Kasir"}
-              </option>
+              {isLoadingUsers ? (
+                <option>Memuat...</option>
+              ) : isError ? (
+                <option>Gagal memuat pengguna</option>
+              ) : (
+                <option value="1">Admin</option>
+              )}
               {users.map((user: User) => (
                 <option key={user.id} value={user.id}>
                   {user.name}
                 </option>
-              ))}
+              ))} 
             </select>
           </div>
 
-          {/* Prompt */}
-          <h3 className="text-center text-lg font-bold uppercase tracking-wide">
-            Masukkan PIN
-          </h3>
+          {/* password input */}
+          <div className="flex flex-col justify-center items-center gap-2 mb-2">
+            <label
+              htmlFor="cashier-select"
+              className="self-start text-lg font-bold"
+            >
+              Masukkan password:
+            </label>
+            <div className="relative w-full">
+              <input
+                name="password"
+                // 3. Toggle type based on state
+                type={showPassword ? "text" : "password"}
+                className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black py-2 focus:outline-0 border-2 border-black bg-white h-14 placeholder:text-black/30 px-4 pr-12 text-base font-bold transition-all duration-200 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                placeholder="******"
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-          {/* PIN Input Display */}
-          <div className="flex justify-center p-6">
-            <div className="relative flex gap-4">
-              {[...Array(6)].map((_, i) => (
-                <PinDot key={i} filled={i < pin.length} />
-              ))}
+              {/* 4. Toggle Button */}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-black/60 hover:text-black transition-colors"
+              >
+                {showPassword ? <EyeOpenIcon /> : <EyeClosedIcon />}
+              </button>
             </div>
           </div>
 
-          {/* Numeric Keypad */}
-          <div className="grid grid-cols-3 gap-3 px-4 py-3">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-              <KeypadButton
-                key={num}
-                onClick={() => handleNumClick(num.toString())}
-              >
-                {num}
-              </KeypadButton>
-            ))}
-            <div className="flex items-center justify-center p-4 h-16 rounded-lg"></div>
-            <KeypadButton onClick={() => handleNumClick("0")}>0</KeypadButton>
-            <KeypadButton onClick={handleBackspace}>
-              <BackspaceIcon className="w-8 h-8 text-black" />
-            </KeypadButton>
-          </div>
-
           {/* Login Button */}
-          <div className="flex p-4 justify-center">
+          <div className="flex justify-center mt-4">
             <button
-              onClick={() => handleLogin(pin)}
+              type="submit"
               className="flex min-w-[84px] w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-black text-white text-lg font-black leading-normal tracking-widest hover:bg-gray-800 transition-all duration-200 border-2 border-black"
             >
               <span className="truncate">LOGIN</span>
             </button>
           </div>
-        </div>
+        </form>
+        <LoadingModal isOpen={isPending} message="Masuk..." />
       </div>
-      <LoadingModal isOpen={isPending} message="Masuk..." />
-    </div>
   );
 };
 

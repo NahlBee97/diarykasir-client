@@ -14,6 +14,8 @@ const QuantitySelector = ({ item }: QuantitySelectorProps) => {
   const { updateItem, removeFromCart, isLoading } = useCart();
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
 
+  const isCartItemQuantitySameAsStock = item.quantity === item.product.stock;
+
   // 2. Logic for Minus Button
   const handleClickMinus = () => {
     if (item.quantity > 1) {
@@ -59,7 +61,7 @@ const QuantitySelector = ({ item }: QuantitySelectorProps) => {
 
         <button
           onClick={handleClickPlus}
-          disabled={isLoading}
+          disabled={isLoading || isCartItemQuantitySameAsStock}
           className={buttonClass}
           aria-label="Increase quantity"
         >

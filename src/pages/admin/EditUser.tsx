@@ -7,6 +7,8 @@ import type { UpdateUser } from "../../interfaces/userInterfaces";
 import { getUserById, updateUser } from "../../services/userServices";
 import { editUserSchema } from "../../schemas/userSchema";
 import LoadingModal from "../../components/LoadingModal";
+import { toast } from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
 
 const shifts = ["Siang", "Malam"];
 
@@ -29,9 +31,10 @@ const EditUser = () => {
     },
     onSuccess: () => {
       navigate("/admin/users");
+      toast.success("Berhasil mengupdate data petugas");
     },
     onError: (error) => {
-      alert("Error: " + error.message);
+      handleApiError(error);
     },
   });
 
@@ -142,9 +145,9 @@ const EditUser = () => {
                     hover:bg-black hover:text-white 
                     transition-all duration-200
                   "
-                  onClick={() => navigate(`/admin/users/pin/${id}`)}
+                  onClick={() => navigate(`/admin/users/password/${id}`)}
                 >
-                  Ganti PIN Akses?
+                  Ganti password?
                 </button>
               </div>
 

@@ -28,17 +28,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   });
 
-  const login = async (userId: number, pin: string) => {
+  const login = async (userId: number, password: string) => {
     try {
       if (!userId) {
-        throw new Error("Pilih kasir terlebih dahulu.");
+        throw new Error("Pilih pengguna terlebih dahulu.");
       }
 
-      if (pin.length !== 6) {
-        throw new Error("PIN harus terdiri dari 6 digit.");
-      }
-
-      const response = await api.post("/api/auth/login", { userId, pin });
+      const response = await api.post("/api/auth/login", { userId, password });
       const { accessToken } = response.data;
 
       localStorage.setItem("token", accessToken);

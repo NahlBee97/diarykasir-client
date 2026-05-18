@@ -28,6 +28,9 @@ const OrderDetailsModal = ({ isOpen, order, onClose }: props) => {
           <p className="text-4xl font-black leading-none tracking-tighter text-black uppercase">
             Order #{order.id}
           </p>
+          <p className="mt-2 font-bold text-black/50 tracking-wide text-sm">
+            {order.customerName === "no name" ? "Umum" : "Nama Pelanggan: " + order.customerName}
+          </p>
           <p className="mt-2 font-bold text-black/50 uppercase tracking-wide text-sm">
             {format(order.createdAt, "dd MMMM yyyy • HH:mm")}
           </p>

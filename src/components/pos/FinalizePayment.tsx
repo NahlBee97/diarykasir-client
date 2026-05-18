@@ -6,7 +6,7 @@ interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   total: number;
-  onConfirm: (cashReceived: number, change: number) => void;
+  onConfirm: (customerName: string, cashReceived: number, change: number) => void;
 }
 
 const PaymentModal: React.FC<PaymentModalProps> = ({
@@ -15,6 +15,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   total,
   onConfirm,
 }) => {
+  const [customerName, setCustomerName] = useState<string>("");
   const [cashReceived, setCashReceived] = useState<string>("");
   const [change, setChange] = useState<number>(0);
 
@@ -65,6 +66,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         {/* Cash Received Input */}
         <div className="flex w-full flex-col gap-2">
           <label className="text-black text-sm font-bold uppercase tracking-wider">
+            Nama Pelanggan (Opsional)
+          </label>
+          <input
+            autoFocus
+            className="w-full border-2 border-black bg-white h-14 px-4 text-xl font-bold text-black placeholder:text-black/30 focus:outline-none focus:bg-gray-50 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transition-all duration-200"
+            placeholder="Masukkan nama pelanggan..."
+            value={customerName}
+            onChange={(e) => setCustomerName(e.target.value)}
+            type="text"
+          />
+        </div>
+
+        {/* Cash Received Input */}
+        <div className="flex w-full flex-col gap-2">
+          <label className="text-black text-sm font-bold uppercase tracking-wider">
             Uang Diterima
           </label>
           <input
@@ -90,7 +106,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         {/* Pay Button */}
         <div className="flex justify-center w-full mt-2">
           <button
-            onClick={() => onConfirm(Number(cashReceived), change)}
+            onClick={() => onConfirm(customerName, Number(cashReceived), change)}
             disabled={Number(cashReceived) < total}
             className="
               w-full h-14

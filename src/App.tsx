@@ -14,12 +14,11 @@ import Products from "./pages/admin/Products";
 import AddEditProduct from "./pages/admin/AddEditProduct";
 import Sales from "./pages/admin/Sales";
 import Report from "./pages/admin/Report";
-import AdminLogin from "./pages/AdminLogin";
 import Users from "./pages/admin/Users";
 import { CartProvider } from "./components/provider/CartProvider";
 import AddUser from "./pages/admin/AddUser";
 import EditUser from "./pages/admin/EditUser";
-import Pin from "./pages/admin/Pin";
+import Password from "./pages/admin/Password";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +32,6 @@ const App = () => {
             <Routes>
               <Route element={<CashierLayout />}>
                 <Route path="/" element={<Login />} />
-                <Route path="/login" element={<AdminLogin />} />
                 <Route element={<ProtectedRoute />}>
                   <Route path="/pos" element={<Pos />} />
                 </Route>
@@ -60,8 +58,8 @@ const App = () => {
                     element={<EditUser />}
                   />
                   <Route
-                    path="/admin/users/pin/:id"
-                    element={<Pin />}
+                    path="/admin/users/password/:id"
+                    element={<Password />}
                   />
                 </Route>
               </Route>

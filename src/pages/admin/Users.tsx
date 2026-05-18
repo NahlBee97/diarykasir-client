@@ -12,10 +12,17 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User } from "../../interfaces/authInterfaces";
 import { deleteUser, getAllUsers } from "../../services/userServices";
+import toast from "react-hot-toast";
+import { handleApiError } from "../../utils/errorHandler";
+import ConfirmModal from "../../components/ConfirmModal";
+import LoadingModal from "../../components/LoadingModal";
 
 const Users = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [userIdToDelete, setUserIdToDelete] = useState<number>(0);
 
   const queryClient = useQueryClient();
 
@@ -34,10 +41,10 @@ const Users = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      alert("Delete User Success");
+      toast.success("Berhasil menghapus user");
     },
     onError: (error) => {
-      alert("Error: " + error);
+      handleApiError(error);
     },
   });
 
@@ -191,7 +198,10 @@ const Users = () => {
                                 transition-all duration-200
                             "
                             disabled={deletePending}
-                            onClick={() => deleteItem(user.id)}
+                            onClick={() => {
+                              setUserIdToDelete(user.id);
+                              setIsModalOpen(true);
+                            }}
                             title="Hapus"
                           >
                             <DeleteIcon  />
@@ -205,6 +215,16 @@ const Users = () => {
             </tbody>
           </table>
         </div>
+        <ConfirmModal
+        isOpen={isModalOpen}
+        message="Apakah Anda yakin ingin menghapus user ini?"
+        onCancel={() => setIsModalOpen(false)}
+        onConfirm={() => {
+          deleteItem(userIdToDelete);
+          setIsModalOpen(false);
+        }}
+      />
+      <LoadingModal isOpen={deletePending} message="Menghapus user..." />
       </div>
     </main>
   );

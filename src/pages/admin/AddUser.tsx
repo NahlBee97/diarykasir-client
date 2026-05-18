@@ -1,16 +1,25 @@
 import { useFormik } from "formik";
-import { ExpandMoreIcon } from "../../components/Icons";
+import {
+  ExpandMoreIcon,
+  EyeClosedIcon,
+  EyeOpenIcon,
+} from "../../components/Icons";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import type { NewUser } from "../../interfaces/userInterfaces";
 import { createUser } from "../../services/userServices";
 import { userSchema } from "../../schemas/userSchema";
 import LoadingModal from "../../components/LoadingModal";
+import { handleApiError } from "../../utils/errorHandler";
+import { toast } from "react-hot-toast";
+import { useState } from "react";
 
 const shifts = ["Siang", "Malam"];
 
 const AddUser = () => {
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate: addUser, isPending: isAddPending } = useMutation({
     mutationFn: async (data: NewUser) => {
@@ -18,9 +27,10 @@ const AddUser = () => {
     },
     onSuccess: () => {
       navigate("/admin/users");
+      toast.success("Berhasil menambahkan user");
     },
     onError: (error) => {
-      alert("Error: " + error.message);
+      handleApiError(error);
     },
   });
 
@@ -28,7 +38,7 @@ const AddUser = () => {
     enableReinitialize: true,
     initialValues: {
       name: "",
-      pin: "",
+      password: "",
       shift: shifts[0],
     },
     validationSchema: userSchema,
@@ -56,7 +66,7 @@ const AddUser = () => {
           {/* Header */}
           <div className="mb-8 border-b-2 border-black pb-6">
             <h1 className="text-black text-4xl font-black leading-tight tracking-tighter uppercase">
-              Tambah Petugas
+              Tambah Petugas Kasir
             </h1>
           </div>
 
@@ -64,7 +74,7 @@ const AddUser = () => {
             <div className="flex flex-col gap-6">
               {/* Name Input */}
               <label className="flex flex-col w-full">
-                <p className={labelClass}>Nama Petugas</p>
+                <p className={labelClass}>Nama</p>
                 <input
                   name="name"
                   className={inputClass}
@@ -79,22 +89,37 @@ const AddUser = () => {
               </label>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* PIN Input */}
+                {/* Password Input */}
                 <label className="flex flex-col w-full">
-                  <p className={labelClass}>PIN Akses</p>
-                  <input
-                    name="pin"
-                    type="password" // Hidden for security, or text if you prefer visibility
-                    maxLength={6} // Assuming 6 digit pin
-                    className={inputClass}
-                    placeholder="******"
-                    value={formik.values.pin}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  {formik.touched.pin && formik.errors.pin && (
-                    <p className={errorClass}>{formik.errors.pin}</p>
-                  )}
+                  <p className={labelClass}>Password</p>
+                  <div className="relative">
+                    <input
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      className=" flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-black py-2 focus:outline-0 border-2 border-black bg-white h-14 placeholder:text-black/30 px-4 pr-12 text-base font-bold transition-all duration-200 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                      placeholder="******"
+                      value={formik.values.password}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-black/60 hover:text-black transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOpenIcon />
+                      ) : (
+                        <EyeClosedIcon />
+                      )}
+                    </button>
+                  </div>
+                  {formik.touched.password &&
+                    formik.errors.password && (
+                      <p className={errorClass}>
+                        {formik.errors.password}
+                      </p>
+                    )}
                 </label>
 
                 {/* Shift Select */}
@@ -120,7 +145,9 @@ const AddUser = () => {
                     </div>
                   </div>
                   {formik.touched.shift && formik.errors.shift && (
-                    <p className={errorClass}>{formik.errors.shift}</p>
+                    <p className={errorClass}>
+                      {formik.errors.shift}
+                    </p>
                   )}
                 </label>
               </div>
@@ -162,7 +189,10 @@ const AddUser = () => {
             </div>
           </form>
         </div>
-        <LoadingModal isOpen={isAddPending} message="Menambahkan kasir..." />
+        <LoadingModal
+          isOpen={isAddPending}
+          message="Menambahkan kasir..."
+        />
       </div>
     </main>
   );
