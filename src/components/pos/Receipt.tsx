@@ -29,7 +29,8 @@ export const Receipt = forwardRef<HTMLDivElement, ReceiptProps>(
         {/* Transaction Details */}
         <div className="text-[10px] mb-2 border-b border-black border-dashed pb-2">
           <div className="flex justify-between">
-            <span>{data.order.customerName === "no name" ? "Umum" : "Nama Pelanggan: " + data.order.customerName}</span>
+            <span>Nama Pelanggan:</span>
+            <span>{data.order.customerName === "no name" ? "Umum" : data.order.customerName}</span>
           </div>
           <div className="flex justify-between">
             <span>Tanggal/Waktu:</span>
