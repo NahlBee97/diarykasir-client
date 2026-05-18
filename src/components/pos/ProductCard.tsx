@@ -1,4 +1,5 @@
 import { formatCurrency } from "../../helper/formatCurrentcy";
+import { useCart } from "../../hooks/useCart";
 import type { Product } from "../../interfaces/productInterfaces";
 
 interface ProductCardProps {
@@ -8,19 +9,21 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ item, onClick, disabled }: ProductCardProps) => {
+  const { cartItems } = useCart();
   const isOutOfStock = item.stock <= 0;
+  const isTheQuantitySameAsStock = cartItems.find((cartItem) => cartItem.product.id === item.id)?.quantity === item.stock;
 
   return (
     <button
       key={item.id}
       onClick={disabled ? undefined : () => onClick(item)}
-      disabled={disabled || isOutOfStock}
+      disabled={disabled || isOutOfStock || isTheQuantitySameAsStock}
       className={`
         group relative flex flex-col aspect-square w-full overflow-hidden 
         rounded-2xl border border-black bg-white text-left
         transition-all duration-200 ease-out
         ${
-          disabled || isOutOfStock
+          disabled || isOutOfStock || isTheQuantitySameAsStock
             ? "cursor-not-allowed opacity-60 grayscale" // Slightly increased opacity so text is readable
             : "cursor-pointer hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none active:scale-98"
         }

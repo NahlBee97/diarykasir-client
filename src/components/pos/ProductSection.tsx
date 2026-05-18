@@ -101,7 +101,7 @@ const ProductSection = ({
         <ProductCard
           key={item.id}
           item={item}
-          disabled={isLoading || isUpdatePending || isAddPending}
+          disabled={isLoading || isUpdatePending || isAddPending }
           onClick={handleProductClick}
         />
       ))}
